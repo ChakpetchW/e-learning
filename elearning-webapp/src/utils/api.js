@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://e-larning.onrender.com/api';
 
 export const getFullUrl = (url) => {
   if (!url) return '';
-  if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+  if (url.startsWith('/uploads')) return `https://e-larning.onrender.com${url}`;
   return url;
 };
 
