@@ -7,15 +7,30 @@ const prisma = new PrismaClient();
 async function seedProduction() {
   try {
     // Upsert admin user with production credentials
-    const hash = await bcrypt.hash('Genjironan.1', 10);
+    const adminHash = await bcrypt.hash('Genjironan.1', 10);
     await prisma.user.upsert({
       where: { email: 'chakpetch@scaleup.co.th' },
-      update: { password: hash, name: 'Chakpetch', role: 'admin' },
+      update: { password: adminHash, name: 'Chakpetch', role: 'admin' },
       create: {
         name: 'Chakpetch',
         email: 'chakpetch@scaleup.co.th',
-        password: hash,
+        password: adminHash,
         role: 'admin',
+        status: 'ACTIVE'
+      }
+    });
+
+    // Upsert default test user
+    const userHash = await bcrypt.hash('user123', 10);
+    await prisma.user.upsert({
+      where: { email: 'user@company.com' },
+      update: { password: userHash },
+      create: {
+        name: 'Test User',
+        email: 'user@company.com',
+        password: userHash,
+        role: 'user',
+        department: 'HRD',
         status: 'ACTIVE'
       }
     });
