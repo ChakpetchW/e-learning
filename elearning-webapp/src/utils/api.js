@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-const API_URL = 'https://e-larning-production.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = API_URL.replace('/api', '');
 
 export const getFullUrl = (url) => {
   if (!url) return '';
-  if (url.startsWith('/uploads')) return `https://e-larning-production.up.railway.app${url}`;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/uploads')) return `${BASE_URL}${url}`;
   return url;
 };
 
