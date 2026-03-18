@@ -3,8 +3,10 @@
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  max-width: 100vw;
   background-color: var(--color-background);
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 .user-header {
@@ -33,11 +35,13 @@
 .user-main {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
   padding-bottom: 80px; /* Space for bottom nav */
   max-width: 600px; /* Mobile width container even on desktop */
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 /* Bottom Navigation */
