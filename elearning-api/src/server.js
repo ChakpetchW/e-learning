@@ -1,4 +1,4 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -36,9 +36,13 @@ app.use((err, req, res, next) => {
 // Start Server (Only when not running as a Vercel function)
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(Server is running on port );
-  });
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (e) {
+    // Port might be in use or other error
+  }
 }
 
 module.exports = app;
