@@ -17,11 +17,19 @@
       "dest": "elearning-api/src/server.js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/elearning-webapp/assets/$1"
+    },
+    {
+      "src": "/((?!api/).*\\.(js|css|png|jpg|svg|ico|webp))",
+      "dest": "/elearning-webapp/$1"
+    },
+    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "elearning-webapp/index.html"
+      "dest": "/elearning-webapp/index.html"
     }
   ]
 }
