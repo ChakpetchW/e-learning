@@ -1,39 +1,19 @@
-const express = require('express');
+﻿const express = require('express');
 const multer = require('multer');
+const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
-const fs = require('fs');
 
 const router = express.Router();
 
-// Ensure uploads directories exist
-const uploadsDir = path.join(__dirname, '../../uploads');
-const imagesDir = path.join(uploadsDir, 'images');
-const documentsDir = path.join(uploadsDir, 'documents');
+// Initialize Supabase Client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-[uploadsDir, imagesDir, documentsDir].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
+// Use Memory Storage for Serverless (Vercel)
+const storage = multer.memoryStorage();
 
-// Configure multer storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const isImage = file.mimetype.startsWith('image/');
-        cb(null, isImage ? imagesDir : documentsDir);
-    },
-    filename: (req, file, cb) => {
-        // Generate unique filename with original extension
-        const ext = path.extname(file.originalname);
-        const baseName = path.basename(file.originalname, ext)
-            .replace(/[^a-zA-Z0-9ก-๙]/g, '_') // sanitize filename
-            .substring(0, 50);
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E4);
-        cb(null, `${baseName}_${uniqueSuffix}${ext}`);
-    }
-});
-
-// File filter
+// File filter (Same as before)
 const fileFilter = (req, file, cb) => {
     const allowedTypes = [
         'image/jpeg', 'image/png', 'image/gif', 'image/webp',
@@ -50,7 +30,7 @@ const fileFilter = (req, file, cb) => {
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('ไม่อนุญาตให้อัปโหลดไฟล์ประเภทนี้'), false);
+        cb(new Error('Invalid file type.'), false);
     }
 };
 
@@ -60,42 +40,47 @@ const upload = multer({
     limits: { fileSize: 50 * 1024 * 1024 } // 50MB max
 });
 
-// POST /api/upload - Upload a single file
-router.post('/', upload.single('file'), (req, res) => {
+// POST /api/upload - Upload to Supabase Storage
+router.post('/', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ message: 'กรุณาเลือกไฟล์' });
+            return res.status(400).json({ message: 'Please select a file.' });
         }
 
         const isImage = req.file.mimetype.startsWith('image/');
+        const bucketName = 'uploads'; // ** Ensure you create this bucket in Supabase **
         const subDir = isImage ? 'images' : 'documents';
-        const fileUrl = `/uploads/${subDir}/${req.file.filename}`;
+        
+        // Generate unique filename
+        const ext = path.extname(req.file.originalname);
+        const baseName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
+        const fileName = ${subDir}/_;
+
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+            .from(bucketName)
+            .upload(fileName, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: true
+            });
+
+        if (error) throw error;
+
+        // Get Public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from(bucketName)
+            .getPublicUrl(fileName);
 
         res.json({
-            message: 'อัปโหลดสำเร็จ',
-            url: fileUrl,
-            filename: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size
+            message: 'Upload successful!',
+            fileUrl: publicUrl,
+            fileName: fileName
         });
-    } catch (error) {
-        console.error('Upload error:', error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปโหลด' });
-    }
-});
 
-// Error handling for multer
-router.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ message: 'ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 50MB)' });
-        }
-        return res.status(400).json({ message: err.message });
+    } catch (err) {
+        console.error('Upload Error:', err);
+        res.status(500).json({ message: 'Upload failed', error: err.message });
     }
-    if (err) {
-        return res.status(400).json({ message: err.message });
-    }
-    next();
 });
 
 module.exports = router;
