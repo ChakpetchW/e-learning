@@ -1,28 +1,18 @@
 ﻿{
   "version": 2,
-  "builds": [
-    {
-      "src": "elearning-api/src/server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "elearning-webapp/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "dest": "elearning-api/src/server.js"
-    },
-    {
-      "source": "/uploads/(.*)",
-      "dest": "https://your-supabase-project.supabase.co/storage/v1/object/public/uploads/1"
+      "dest": "/elearning-api/src/server.js"
     },
     {
       "source": "/(.*)",
-      "dest": "elearning-webapp/"
+      "dest": "/elearning-webapp/"
     }
-  ]
+  ],
+  "functions": {
+    "elearning-api/src/server.js": {
+      "runtime": "vercel-node@latest"
+    }
+  }
 }
