@@ -262,7 +262,7 @@ const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, order } = req.body;
     const category = await prisma.category.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { name, order }
     });
     res.json(category);
@@ -275,7 +275,7 @@ const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
     // Note: This might fail if courses exist under this category depending on Prisma constraints
-    await prisma.category.delete({ where: { id: parseInt(id) } });
+    await prisma.category.delete({ where: { id } });
     res.json({ message: 'Category deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error (check if courses exist in this category)' });

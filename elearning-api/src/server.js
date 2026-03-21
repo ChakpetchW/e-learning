@@ -10,8 +10,9 @@ const uploadRoutes = require('./routes/upload.routes');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors()); // In production, you might want to restrict this to your Vercel domain
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files as static (Only for local development)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

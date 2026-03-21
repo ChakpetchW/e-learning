@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
@@ -54,7 +54,7 @@ router.post('/', upload.single('file'), async (req, res) => {
         // Generate unique filename
         const ext = path.extname(req.file.originalname);
         const baseName = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
-        const fileName = ${subDir}/_;
+        const fileName = `${subDir}/${Date.now()}_${baseName}${ext}`;
 
         // Upload to Supabase Storage
         const { data, error } = await supabase.storage

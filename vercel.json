@@ -8,7 +8,9 @@
     {
       "src": "elearning-webapp/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
@@ -17,12 +19,13 @@
       "dest": "elearning-api/src/server.js"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/elearning-webapp/assets/$1"
+      "src": "/uploads/(.*)",
+      "dest": "elearning-api/src/server.js"
     },
     {
-      "src": "/((?!api/).*\\.(js|css|png|jpg|svg|ico|webp))",
-      "dest": "/elearning-webapp/$1"
+      "src": "/(.*)",
+      "dest": "/elearning-webapp/$1",
+      "continue": true
     },
     {
       "handle": "filesystem"
