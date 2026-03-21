@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 2,
   "builds": [
     {
@@ -18,7 +18,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "elearning-webapp/"
+      "dest": "elearning-webapp/$1"
     }
   ]
 }
