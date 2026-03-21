@@ -1,27 +1,22 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "elearning-api/src/server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "elearning-webapp/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+  "functions": {
+    "elearning-api/src/server.js": {
+      "runtime": "vercel-node@latest"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "elearning-api/src/server.js"
+      "source": "/api/(.*)",
+      "destination": "/elearning-api/src/server.js"
     },
     {
-      "handle": "filesystem"
+      "source": "/(.*)",
+      "destination": "/elearning-webapp/dist/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/elearning-webapp/dist/index.html"
     }
   ]
 }
