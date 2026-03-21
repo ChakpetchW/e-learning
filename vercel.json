@@ -14,16 +14,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "dest": "elearning-api/src/server.js"
+      "destination": "/elearning-api/src/server.js"
     },
     {
       "source": "/(.*)",
-      "dest": "/elearning-webapp/$1",
-      "continue": true
-    },
-    {
-      "source": "/(.*)",
-      "dest": "/elearning-webapp/index.html"
+      "destination": "/elearning-webapp/$1"
     }
   ]
 }
