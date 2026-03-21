@@ -2,7 +2,8 @@
   "name": "elearning-monorepo",
   "private": true,
   "scripts": {
-    "build": "cd elearning-webapp && npm install && npm run build",
-    "install-api": "cd elearning-api && npm install"
+    "build": "npm run build-api && npm run build-webapp",
+    "build-api": "cd elearning-api && npm install && npx prisma generate",
+    "build-webapp": "cd elearning-webapp && npm install && npm run build && mv dist ../dist"
   }
 }
