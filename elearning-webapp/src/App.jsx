@@ -11,6 +11,7 @@ import Login from './pages/auth/Login';
 // User Pages
 import Home from './pages/user/Home';
 import CourseList from './pages/user/CourseList';
+import CompletedCourses from './pages/user/CompletedCourses';
 import CourseDetail from './pages/user/CourseDetail';
 import LessonPlayer from './pages/user/LessonPlayer';
 import Rewards from './pages/user/Rewards';
@@ -48,6 +49,7 @@ function App() {
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
           <Route path="courses" element={<CourseList />} />
+          <Route path="completed" element={<CompletedCourses />} />
           <Route path="courses/:id" element={<CourseDetail />} />
           <Route path="courses/:id/lesson/:lessonId" element={<LessonPlayer />} />
           <Route path="rewards" element={<Rewards />} />

@@ -301,6 +301,23 @@ const LessonPlayer = () => {
             >
                {updating ? 'กำลังตรวจคำตอบ...' : 'ส่งคำตอบ'}
             </button>
+          ) : lesson.type === 'quiz' && (completed || quizResult?.passed) ? (
+            <div className="flex flex-col gap-3">
+               <div className="bg-success/10 border border-success/20 text-success p-5 rounded-2xl text-center animate-fade-in flex flex-col items-center gap-3 shadow-inner">
+                <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center shadow-lg shadow-success/30 transform scale-up-center">
+                  <CheckCircle size={32} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 className="font-black text-xl text-gray-900">คุณเรียนจบบทนี้แล้ว!</h3>
+                </div>
+              </div>
+              <button
+                onClick={() => { setQuizResult(null); setAnswers({}); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="btn bg-white text-primary hover:bg-primary/5 w-full py-4 text-[15px] rounded-xl shadow-md border-2 border-primary/20 transition-all flex items-center justify-center font-bold"
+              >
+                ทำแบบทดสอบอีกครั้งเพื่อทบทวน
+              </button>
+            </div>
           ) : !completed && lesson.type !== 'quiz' ? (
             <button
               onClick={handleComplete}
@@ -309,16 +326,13 @@ const LessonPlayer = () => {
             >
               <CheckCircle size={20} /> {updating ? 'กำลังบันทึก...' : 'ทำเครื่องหมายว่าเรียนจบ'}
             </button>
-          ) : completed || quizResult?.passed ? (
+          ) : completed && lesson.type !== 'quiz' ? (
             <div className="bg-success/10 border border-success/20 text-success p-5 rounded-2xl text-center animate-fade-in flex flex-col items-center gap-3 shadow-inner">
               <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center shadow-lg shadow-success/30 transform scale-up-center">
                 <CheckCircle size={32} strokeWidth={2.5} />
               </div>
               <div>
                 <h3 className="font-black text-xl text-gray-900">คุณเรียนจบบทนี้แล้ว!</h3>
-                <p className="text-sm font-bold text-success/80 mt-1 flex items-center justify-center gap-1.5">
-                  {course?.points > 0 ? `อาจได้แต้มพิเศษเมื่อจบครบ ${course.points} Pts` : ''}
-                </p>
               </div>
             </div>
           ) : quizResult && !quizResult?.passed ? (
