@@ -17,8 +17,17 @@
       "dest": "elearning-api/src/server.js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "elearning-webapp/dist/assets/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "elearning-webapp/$1"
+      "dest": "elearning-webapp/dist/$1",
+      "check": true
+    },
+    {
+      "src": "/(.*)",
+      "dest": "elearning-webapp/dist/index.html"
     }
   ]
 }
