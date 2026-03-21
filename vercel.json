@@ -11,23 +11,19 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
+      "source": "/api/(.*)",
       "dest": "elearning-api/src/server.js"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "elearning-webapp/dist/assets/$1"
+      "source": "/(.*)",
+      "dest": "/elearning-webapp/$1",
+      "continue": true
     },
     {
-      "src": "/(.*)",
-      "dest": "elearning-webapp/dist/$1",
-      "check": true
-    },
-    {
-      "src": "/(.*)",
-      "dest": "elearning-webapp/dist/index.html"
+      "source": "/(.*)",
+      "dest": "/elearning-webapp/index.html"
     }
   ]
 }
