@@ -11,14 +11,17 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "elearning-api/src/server.js"
+      "src": "/api/(.*)",
+      "dest": "elearning-api/src/server.js"
     },
     {
-      "source": "/((?!api/).*)",
-      "destination": "/elearning-webapp/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
