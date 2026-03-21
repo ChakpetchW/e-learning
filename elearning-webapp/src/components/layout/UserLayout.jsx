@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Gift, User, BookMarked, LogOut, CheckCircle } from 'lucide-react';
 import { userAPI } from '../../utils/api';
 import './UserLayout.css';
 
 const UserLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [points, setPoints] = useState(0);
 
@@ -21,7 +22,7 @@ const UserLayout = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
