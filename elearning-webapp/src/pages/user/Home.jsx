@@ -76,7 +76,7 @@ const Home = () => {
   );
 
   return (
-    <div className="flex flex-col gap-10 animate-fade-in pt-4">
+    <div className="flex flex-col gap-10 animate-fade-in pt-10">
       
       {/* Header Section */}
       <div>

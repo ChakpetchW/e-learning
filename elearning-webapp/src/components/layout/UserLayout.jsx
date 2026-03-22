@@ -108,7 +108,7 @@ const UserLayout = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="user-main flex-1 animate-fade-in no-scrollbar md:!max-w-none md:!p-8 md:!pb-8 bg-gray-50 pb-[80px]">
+        <main className="user-main flex-1 no-scrollbar md:!max-w-none md:!p-8 md:!pb-8 bg-gray-50">
           <Outlet />
         </main>
 
