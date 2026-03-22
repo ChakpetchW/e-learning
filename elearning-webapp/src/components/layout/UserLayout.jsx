@@ -86,19 +86,23 @@ const UserLayout = () => {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Header (Mobile Only) */}
         <header className="user-header md:hidden">
-          <div className="header-content">
-            <div className="flex items-center gap-2 max-w-[60%]">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-sm shrink-0">
-                <BookMarked size={18} strokeWidth={2.5}/>
+          <div className="header-content pt-1">
+            <div className="flex items-center gap-2 max-w-[65%]">
+              <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-primary/20 shrink-0">
+                <BookMarked size={20} strokeWidth={2.5}/>
               </div>
               <div className="flex flex-col overflow-hidden">
                 <h1 className="text-lg font-bold tracking-tight text-gray-900 leading-none truncate">LMS Connect</h1>
-                <span className="text-[10px] text-gray-500 font-medium truncate">สวัสดีคุณ {user?.name ? (user.name.split(' ')[0] === 'คุณ' ? user.name.split(' ')[1] : user.name.split(' ')[0]) : 'ผู้ใช้งาน'}</span>
+                {location.pathname !== '/user/home' && (
+                  <span className="text-[10px] text-gray-500 font-medium truncate mt-0.5">
+                    สวัสดีคุณ {user?.name ? (user.name.split(' ')[0] === 'คุณ' ? user.name.split(' ')[1] : user.name.split(' ')[0]) : 'ผู้ใช้งาน'}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="points-pill shrink-0">
+            <div className="points-pill shrink-0 shadow-sm border border-orange-100/50">
               <Gift size={12} strokeWidth={3} />
-              <span>{points.toLocaleString()} Pts</span>
+              <span className="font-extrabold">{points.toLocaleString()} Pts</span>
             </div>
           </div>
         </header>
