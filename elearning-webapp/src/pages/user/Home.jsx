@@ -53,10 +53,14 @@ const Home = () => {
   const CourseCard = ({ course }) => (
     <div 
       onClick={() => navigate(`/user/courses/${course.id}`)}
-      className="card min-w-[260px] md:min-w-0 md:w-full snap-center md:snap-none flex-shrink-0 md:flex-shrink cursor-pointer group flex flex-col justify-between"
+      className="card min-w-[280px] md:min-w-0 md:w-full snap-center md:snap-none flex-shrink-0 md:flex-shrink cursor-pointer group flex flex-col items-stretch overflow-hidden h-auto"
     >
-      <div className="relative aspect-video md:aspect-[16/10] overflow-hidden">
-        <img src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+      <div className="relative w-full h-[180px] sm:h-[200px] md:h-[220px] overflow-hidden rounded-t-2xl">
+        <img 
+          src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} 
+          alt={course.title} 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+        />
         <div className="absolute top-2 left-2 points-pill shadow-sm bg-white/90 backdrop-blur-sm !text-warning border border-orange-100">
           <span className="opacity-60 text-[10px]">⭐</span>{course.points} Pts
         </div>
