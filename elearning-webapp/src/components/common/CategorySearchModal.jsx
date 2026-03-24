@@ -98,9 +98,9 @@ const CategorySearchModal = ({ isOpen, onClose, categories, courses, onSelect })
                     <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0">
                       <Icon size={28} />
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                      <h4 className="font-black text-slate-900 text-lg group-hover:text-primary transition-colors leading-tight truncate">{cat.name}</h4>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">{count} Courses</p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-black text-slate-900 text-[1.05rem] group-hover:text-primary transition-colors leading-tight break-words">{cat.name}</h4>
+                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1.5">{count} Courses</p>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-300 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0">
                       <ArrowRight size={16} />

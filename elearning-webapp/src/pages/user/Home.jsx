@@ -262,15 +262,15 @@ const Home = () => {
               <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">Browse Categories</h3>
               <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest">{categories.length} Topics</p>
            </div>
-           
+
             <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 flex-nowrap items-center text-xs">
-               <button 
+               <button
                  onClick={() => navigate('/user/courses')}
                  className="shrink-0 px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-200 active:scale-95 transition-all whitespace-nowrap min-w-fit"
                >
                  All Courses
                </button>
-               {categories.slice(0, 4).map(cat => (
+               {categories.map(cat => (
                  <button
                    key={cat.id}
                    onClick={() => navigate(`/user/courses?category=${encodeURIComponent(cat.name)}`)}
@@ -279,15 +279,15 @@ const Home = () => {
                    {cat.name}
                  </button>
                ))}
+               
+               {/* View All Button at the end of the row */}
+               <button 
+                onClick={() => setIsCatModalOpen(true)}
+                className="shrink-0 px-6 md:px-8 py-3.5 bg-primary/5 text-primary border border-primary/20 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"
+               >
+                 <Grid size={14} /> ดูทั้งหมด
+               </button>
 
-               {categories.length > 4 && (
-                 <button
-                   onClick={() => setIsCatModalOpen(true)}
-                   className="shrink-0 px-6 md:px-8 py-3.5 bg-primary/5 text-primary border border-primary/20 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"
-                 >
-                   <Grid size={14} /> ดูทั้งหมด
-                 </button>
-               )}
            </div>
 
            <div
