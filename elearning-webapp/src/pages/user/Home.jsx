@@ -263,7 +263,7 @@ const Home = () => {
               <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest">{categories.length} Topics</p>
            </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 flex-nowrap items-center text-xs">
+            <div className="flex gap-3 flex-wrap items-center text-xs px-1">
                <button
                  onClick={() => navigate('/user/courses')}
                  className="shrink-0 px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-200 active:scale-95 transition-all whitespace-nowrap min-w-fit"
