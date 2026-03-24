@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Clock, Star, PlayCircle, X, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { userAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
 
 const CourseList = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlCategory = searchParams.get('category');
+  
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   
   // Filter & Search State
-  const [activeCat, setActiveCat] = useState('All');
+  const [activeCat, setActiveCat] = useState(urlCategory || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest'); // 'newest', 'oldest', 'a-z'
   
   // UI State
   const [loading, setLoading] = useState(true);
   const [showFilterModal, setShowFilterModal] = useState(false);
+
+  useEffect(() => {
+    if (urlCategory) {
+      setActiveCat(urlCategory);
+    }
+  }, [urlCategory]);
 
   useEffect(() => {
     const fetchData = async () => {
