@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Clock, Star, PlayCircle, X, ChevronDown } from 'lucide-react';
+import { Search, Filter, X, ChevronDown, Grid } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { userAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
+import { userAPI } from '../../utils/api';
+import { filterCourses, sortCourses } from '../../utils/courseFilters';
 import CategorySearchModal from '../../components/common/CategorySearchModal';
-import { Grid } from 'lucide-react';
+import CourseCard from '../../components/common/CourseCard';
 
 const CourseList = () => {
   const navigate = useNavigate();
@@ -48,22 +48,10 @@ const CourseList = () => {
   }, []);
 
   // Compute Filtered and Sorted Array
-  let filtered = courses.filter(c => {
-    const matchCat = activeCat === 'All' || c.category?.name === activeCat;
-    const searchLower = searchQuery.toLowerCase();
-    const matchSearch = c.title.toLowerCase().includes(searchLower) || (c.description && c.description.toLowerCase().includes(searchLower));
-    return matchCat && matchSearch;
-  });
-
-  if (sortBy === 'newest') {
-    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  } else if (sortBy === 'oldest') {
-    filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-  } else if (sortBy === 'a-z') {
-    filtered.sort((a, b) => a.title.localeCompare(b.title));
-  } else if (sortBy === 'points_desc') {
-    filtered.sort((a, b) => b.points - a.points);
-  }
+  const filtered = sortCourses(
+    filterCourses(courses, { activeCat, searchQuery }),
+    sortBy
+  );
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in h-full pt-2 relative pb-32">
@@ -141,68 +129,12 @@ const CourseList = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4 mb-10 relative z-10">
         {!loading && filtered.length > 0 ? (
           filtered.map(course => (
-            <div 
+            <CourseCard 
               key={course.id} 
+              course={course} 
               onClick={() => navigate(`/user/courses/${course.id}`)}
-              className="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer w-full h-full"
-            >
-              {/* Image Section */}
-              <div className="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden border-b border-gray-100">
-                <img 
-                   src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} 
-                   alt={course.title} 
-                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                />
-                {/* Play overlay for hover */}
-                <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                   <div className="w-14 h-14 bg-white/95 rounded-full shadow-lg flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                     <PlayCircle size={28} className="text-primary" />
-                   </div>
-                </div>
-              </div>
-              
-              {/* Content Section */}
-              <div className="p-5 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-2">
-                   <span className="text-[11px] font-bold text-gray-500 tracking-wider uppercase">{course.category?.name || 'Uncategorized'}</span>
-                   {course.isEnrolled && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${course.enrollmentStatus === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
-                        {course.enrollmentStatus === 'COMPLETED' ? 'เรียนจบแล้ว' : 'กำลังเรียน'}
-                      </span>
-                    )}
-                </div>
-                <h3 className="text-[1.05rem] font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
-                
-                {/* Meta details */}
-                <div className="flex items-center gap-3 mt-auto mb-4">
-                   <div className="flex items-center gap-1">
-                      <Star size={14} className="fill-amber-400 text-amber-400" />
-                      <span className="text-sm font-bold text-slate-800">4.8</span>
-                      <span className="text-xs text-gray-400 font-medium">(124)</span>
-                   </div>
-                   <div className="flex items-center gap-1.5 text-gray-500 text-[13px] font-medium border-l border-gray-200 pl-3">
-                      <Clock size={14} className="text-gray-400" />
-                      <span>{course.lessons?.reduce((acc, l) => acc + (parseInt(l.duration)||0), 0) || '2'} ชม.</span>
-                   </div>
-                </div>
-
-                {/* Footer Price / Points */}
-                <div className="pt-3.5 border-t border-gray-100 flex justify-between items-center mt-auto gap-4">
-                   <div className="flex items-center gap-1.5 overflow-hidden">
-                      <div className="w-5 h-5 rounded-full bg-slate-200 flex-shrink-0"></div>
-                      <span className="text-[11px] font-medium text-gray-500 truncate">ผู้สอน: {course.instructorName || 'ทีมงานวิทยากร'}</span>
-                   </div>
-                   <div className="flex flex-col items-end leading-tight shrink-0">
-                      <span className="text-[1.1rem] font-black text-primary tracking-tighter">
-                         {course.points > 0 ? course.points.toLocaleString() : 'ฟรี'}
-                      </span>
-                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest -mt-0.5">
-                         {course.points > 0 ? 'Pts.' : 'เรียน'}
-                      </span>
-                   </div>
-                </div>
-              </div>
-            </div>
+              className="w-full h-full"
+            />
           ))
         ) : !loading && (
           <div className="col-span-full text-center py-16 flex flex-col items-center justify-center text-gray-400 bg-white rounded-[2rem] border border-dashed border-gray-300 shadow-sm w-full">
