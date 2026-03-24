@@ -2,6 +2,114 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Search, Edit, Trash2, MoreVertical, FileText, Video, Layers, X, ChevronRight, Play, Upload, Clock, MonitorPlay, Infinity as InfinityIcon, PlayCircle, BookOpen, Image as ImageIcon } from 'lucide-react';
 import { adminAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
 
+// --- ROBUST SUB-COMPONENTS FOR PREMIUM LISTS ---
+
+const OutcomeListEditor = ({ value, onChange }) => {
+  const tryParse = (val) => {
+    try {
+      const parsed = JSON.parse(val || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) { return []; }
+  };
+  
+  const items = tryParse(value);
+
+  const update = (newItems) => onChange(JSON.stringify(newItems));
+
+  return (
+    <div className="space-y-3">
+      {items.map((item, idx) => (
+        <div key={idx} className="flex gap-2 group">
+          <input 
+            className="form-input flex-1 bg-white text-base py-3 border-emerald-100 focus:border-emerald-400" 
+            value={item} 
+            placeholder="เช่น หลักการออกแบบ UX/UI เบื้องต้น..."
+            onChange={(e) => {
+              const newItems = [...items];
+              newItems[idx] = e.target.value;
+              update(newItems);
+            }}
+          />
+          <button type="button" onClick={() => update(items.filter((_, i) => i !== idx))} 
+            className="p-2 text-red-300 hover:text-red-500 hover:bg-red-50 rounded transition-all">
+            <Trash2 size={20}/>
+          </button>
+        </div>
+      ))}
+      <button type="button" onClick={() => update([...items, ""])} 
+        className="text-sm font-black text-emerald-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl border-2 border-dashed border-emerald-200 block w-full text-center transition-all">
+        + เพิ่มสิ่งที่จะได้เรียนรู้ใหม่
+      </button>
+    </div>
+  );
+};
+
+const BenefitListEditor = ({ value, onChange }) => {
+  const tryParse = (val) => {
+    try {
+      const parsed = JSON.parse(val || '[]');
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map(item => (typeof item === 'string' || item === null) ? { icon: 'MonitorPlay', text: item || '' } : item);
+    } catch (e) { return []; }
+  };
+  
+  const items = tryParse(value);
+  const update = (newItems) => onChange(JSON.stringify(newItems));
+
+  const IconCompMap = { MonitorPlay, FileText, InfinityIcon, Award, PlayCircle, BookOpen };
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, idx) => {
+        const IconComp = IconCompMap[item.icon || 'MonitorPlay'] || MonitorPlay;
+        return (
+          <div key={idx} className="p-4 bg-white rounded-2xl border-2 border-slate-100 shadow-sm space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-2 rounded-xl text-primary">
+                <IconComp size={22} />
+              </div>
+              <select 
+                className="bg-slate-100 border-none text-xs font-black rounded-lg py-1.5 px-3 cursor-pointer text-slate-600 uppercase tracking-tight focus:ring-0"
+                value={item.icon || 'MonitorPlay'}
+                onChange={(e) => {
+                  const newItems = [...items];
+                  newItems[idx] = { ...item, icon: e.target.value };
+                  update(newItems);
+                }}
+              >
+                <option value="MonitorPlay">วิดีโอ (Video)</option>
+                <option value="FileText">เอกสาร (File)</option>
+                <option value="InfinityIcon">ตลอดชีพ (Lifetime)</option>
+                <option value="Award">วุฒิบัตร (Award)</option>
+                <option value="PlayCircle">การเล่น (Play)</option>
+                <option value="BookOpen">บทเรียน (Lesson)</option>
+              </select>
+              <div className="flex-1"></div>
+              <button type="button" onClick={() => update(items.filter((_, i) => i !== idx))}
+                className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                <Trash2 size={20}/>
+              </button>
+            </div>
+            <input 
+              className="form-input w-full border-none bg-slate-50 text-base py-3 px-4 rounded-xl focus:bg-white focus:ring-1 focus:ring-primary/20 transition-all font-medium" 
+              placeholder="เช่น รับวิดีโอคุณภาพระดับ Full HD..."
+              value={item.text} 
+              onChange={(e) => {
+                const newItems = [...items];
+                newItems[idx] = { ...item, text: e.target.value };
+                update(newItems);
+              }}
+            />
+          </div>
+        );
+      })}
+      <button type="button" onClick={() => update([...items, { icon: 'MonitorPlay', text: '' }])}
+        className="text-sm font-black text-primary hover:bg-primary px-4 py-3 rounded-2xl border-2 border-dashed border-primary/20 hover:text-white block w-full text-center transition-all bg-primary/5">
+        + เพิ่มสิทธิประโยชน์ที่จะได้รับ
+      </button>
+    </div>
+  );
+};
 const CourseManagement = () => {
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -492,124 +600,27 @@ const CourseManagement = () => {
                         </div>
                       </div>
 
-                      {/* Lists Editor Section */}
-                      <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-xl border border-slate-100 mt-2">
+                      <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8 p-8 bg-slate-50 rounded-2xl border-2 border-slate-100 mt-4">
                          {/* What You'll Learn Editor */}
-                         <div className="space-y-3">
-                            <label className="text-base font-black text-slate-800 flex items-center gap-2">
-                              <Plus size={18} className="text-emerald-500"/> สิ่งที่จะได้เรียนรู้ (ข้อดี)
+                         <div className="space-y-4">
+                            <label className="text-xl font-black text-slate-900 flex items-center gap-2">
+                              <Plus size={22} className="text-emerald-500"/> สิ่งที่จะได้เรียนรู้ (Outcomes)
                             </label>
-                            <div className="space-y-2">
-                              {(() => {
-                                try {
-                                  const rawValue = courseForm.whatYouWillLearn || '[]';
-                                  const items = Array.isArray(JSON.parse(rawValue)) ? JSON.parse(rawValue) : [];
-                                  return (
-                                    <>
-                                      {items.map((item, idx) => (
-                                        <div key={idx} className="flex gap-1 group">
-                                          <input 
-                                            className="form-input flex-1 bg-white text-sm py-2.5 border-emerald-100 focus:border-emerald-300" 
-                                            value={item} 
-                                            placeholder="กรอกข้อความ..."
-                                            onChange={(e) => {
-                                              const newItems = [...items];
-                                              newItems[idx] = e.target.value;
-                                              setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
-                                            }}
-                                          />
-                                          <button type="button" onClick={() => {
-                                            const newItems = items.filter((_, i) => i !== idx);
-                                            setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
-                                          }} className="p-2 text-red-300 hover:text-red-500 hover:bg-red-50 rounded transition-all"><Trash2 size={16}/></button>
-                                        </div>
-                                      ))}
-                                      <button type="button" onClick={() => {
-                                        const newItems = [...items, ""];
-                                        setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
-                                      }} className="text-xs font-bold text-emerald-600 hover:bg-emerald-50 px-3 py-1.5 rounded-lg border border-dashed border-emerald-200 block w-full text-center">+ เพิ่มข้อได้เปรียบใหม่</button>
-                                    </>
-                                  );
-                                } catch (e) {
-                                  return <textarea rows={4} className="form-input w-full bg-white font-mono text-xs" value={courseForm.whatYouWillLearn} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillLearn: e.target.value })} />;
-                                }
-                              })()}
-                            </div>
+                            <OutcomeListEditor 
+                              value={courseForm.whatYouWillLearn} 
+                              onChange={(val) => setCourseForm({ ...courseForm, whatYouWillLearn: val })} 
+                            />
                          </div>
 
-                         {/* What You'll Get Editor (with Icon Picker) */}
-                         <div className="space-y-3">
-                            <label className="text-base font-black text-slate-800 flex items-center gap-2">
-                              <Layers size={18} className="text-primary"/> สิ่งที่จะได้รับ (พร้อมไอคอน)
+                         {/* What You'll Get Editor */}
+                         <div className="space-y-4">
+                            <label className="text-xl font-black text-slate-900 flex items-center gap-2">
+                              <Layers size={22} className="text-primary"/> สิ่งที่จะได้รับพิเศษ (Benefits)
                             </label>
-                            <div className="space-y-3">
-                              {(() => {
-                                try {
-                                  const rawValue = courseForm.whatYouWillGet || '[]';
-                                  const rawItems = Array.isArray(JSON.parse(rawValue)) ? JSON.parse(rawValue) : [];
-                                  const items = rawItems.map(item => (typeof item === 'string' || item === null) ? { icon: 'MonitorPlay', text: item || '' } : item);
-                                  
-                                  const iconOptions = [
-                                    { val: 'MonitorPlay', label: 'วิดีโอ' },
-                                    { val: 'FileText', label: 'เอกสาร' },
-                                    { val: 'InfinityIcon', label: 'ตลอดชีพ' },
-                                    { val: 'Award', label: 'วุฒิบัตร' },
-                                    { val: 'PlayCircle', label: 'เล่น' },
-                                    { val: 'BookOpen', label: 'บทเรียน' }
-                                  ];
-
-                                  return (
-                                    <>
-                                      {items.map((item, idx) => (
-                                        <div key={idx} className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-slate-200 shadow-sm group">
-                                          <div className="flex gap-3 items-center">
-                                            <div className="bg-slate-50 p-1.5 rounded-lg border border-slate-100">
-                                               {(() => {
-                                                  const IconComp = { MonitorPlay, FileText, InfinityIcon, Award, PlayCircle, BookOpen }[item.icon || 'MonitorPlay'] || MonitorPlay;
-                                                  return <IconComp size={18} className="text-primary" />;
-                                               })()}
-                                            </div>
-                                            <select 
-                                              className="bg-slate-50 border-none text-[11px] font-black rounded p-1 focus:ring-0 cursor-pointer text-slate-500 uppercase"
-                                              value={item.icon || 'MonitorPlay'}
-                                              onChange={(e) => {
-                                                const newItems = [...items];
-                                                newItems[idx] = { ...item, icon: e.target.value };
-                                                setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                              }}
-                                            >
-                                              {iconOptions.map(opt => <option key={opt.val} value={opt.val}>{opt.label}</option>)}
-                                            </select>
-                                            <div className="flex-1"></div>
-                                            <button type="button" onClick={() => {
-                                              const newItems = items.filter((_, i) => i !== idx);
-                                              setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                            }} className="p-1.5 text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={16}/></button>
-                                          </div>
-                                          <input 
-                                            className="form-input w-full border-none bg-slate-50/50 text-sm py-2 px-3 rounded-lg focus:bg-white transition-all" 
-                                            placeholder="เช่น วิดีโอระดับ Full HD..."
-                                            value={item.text} 
-                                            onChange={(e) => {
-                                              const newItems = [...items];
-                                              newItems[idx] = { ...item, text: e.target.value };
-                                              setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                            }}
-                                          />
-                                        </div>
-                                      ))}
-                                      <button type="button" onClick={() => {
-                                        const newItems = [...items, { icon: 'MonitorPlay', text: '' }];
-                                        setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                      }} className="text-xs font-bold text-primary hover:bg-primary/5 px-3 py-2 rounded-xl border border-dashed border-primary/20 block w-full text-center">+ เพิ่มสิทธิประโยชน์ใหม่</button>
-                                    </>
-                                  );
-                                } catch (e) {
-                                   console.error('List Editor Error:', e);
-                                   return <textarea rows={4} className="form-input w-full bg-white font-mono text-xs" value={courseForm.whatYouWillGet} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillGet: e.target.value })} />;
-                                }
-                              })()}
-                            </div>
+                            <BenefitListEditor 
+                              value={courseForm.whatYouWillGet} 
+                              onChange={(val) => setCourseForm({ ...courseForm, whatYouWillGet: val })} 
+                            />
                          </div>
                       </div>
                     </div>
