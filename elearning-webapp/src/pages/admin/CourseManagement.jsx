@@ -285,10 +285,7 @@ const CourseManagement = () => {
           <div className="card bg-white w-full max-w-6xl h-full overflow-hidden shadow-xl flex flex-col m-auto border border-gray-100">
             {/* Header & Tabs */}
             <div className="p-4 border-b border-border bg-gray-50 flex justify-between items-center">
-              <div className="flex flex-col">
-                <h3 className="text-xl font-bold">{isEditing ? 'แก้ไขคอร์สเรียน' : 'สร้างคอร์สใหม่'}</h3>
-                <span className="text-[10px] text-red-500 font-black animate-pulse uppercase">--- NEW VERSION 2.3 (PREMIUM FIELDS MERGED) ---</span>
-              </div>
+              <h3 className="text-xl font-bold">{isEditing ? 'แก้ไขคอร์สเรียน' : 'สร้างคอร์สใหม่'}</h3>
               <button onClick={() => setShowModal(false)} className="text-muted hover:text-gray-900"><X size={20} /></button>
             </div>
 
@@ -463,22 +460,104 @@ const CourseManagement = () => {
                           <input type="text" placeholder="ความยาวคอร์ส (e.g. 120 ชม.)" className="form-input flex-1 bg-white text-sm" value={courseForm.totalDuration} onChange={(e) => setCourseForm({ ...courseForm, totalDuration: e.target.value })} />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
-                           <input type="number" step="0.1" placeholder="เรตติ้ง" className="form-input w-full bg-white text-[10px]" value={courseForm.rating} onChange={(e) => setCourseForm({ ...courseForm, rating: e.target.value })} />
-                           <input type="number" placeholder="รีวิว (คน)" className="form-input w-full bg-white text-[10px]" value={courseForm.reviewCount} onChange={(e) => setCourseForm({ ...courseForm, reviewCount: e.target.value })} />
-                           <input type="number" placeholder="ผู้เรียน (คน)" className="form-input w-full bg-white text-[10px]" value={courseForm.studentCount} onChange={(e) => setCourseForm({ ...courseForm, studentCount: e.target.value })} />
+                           <div>
+                             <label className="text-[10px] font-bold text-slate-400 uppercase">เรตติ้ง (0-5)</label>
+                             <input type="number" step="0.1" placeholder="4.8" className="form-input w-full bg-white text-sm" value={courseForm.rating} onChange={(e) => setCourseForm({ ...courseForm, rating: e.target.value })} />
+                           </div>
+                           <div>
+                             <label className="text-[10px] font-bold text-slate-400 uppercase">รีวิว (คน)</label>
+                             <input type="number" placeholder="1240" className="form-input w-full bg-white text-sm" value={courseForm.reviewCount} onChange={(e) => setCourseForm({ ...courseForm, reviewCount: e.target.value })} />
+                           </div>
+                           <div>
+                             <label className="text-[10px] font-bold text-slate-400 uppercase">ผู้เรียน (คน)</label>
+                             <input type="number" placeholder="5000" className="form-input w-full bg-white text-sm" value={courseForm.studentCount} onChange={(e) => setCourseForm({ ...courseForm, studentCount: e.target.value })} />
+                           </div>
                         </div>
                       </div>
 
-                      {/* Lists */}
-                      <div className="md:col-span-2 space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Lists Editor */}
+                      <div className="md:col-span-2 space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* What You'll Learn Editor */}
                             <div>
-                               <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">สิ่งที่จะได้เรียนรู้ (JSON List)</label>
-                               <textarea rows={2} className="form-input w-full bg-white font-mono text-[10px]" value={courseForm.whatYouWillLearn} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillLearn: e.target.value })} />
+                               <label className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
+                                 <Plus size={14} className="text-emerald-500"/> สิ่งที่จะได้เรียนรู้ (ข้อดีของคอร์ส)
+                               </label>
+                               <div className="space-y-2">
+                                 {(() => {
+                                   try {
+                                     const items = JSON.parse(courseForm.whatYouWillLearn || '[]');
+                                     return (
+                                       <>
+                                         {items.map((item, idx) => (
+                                           <div key={idx} className="flex gap-1">
+                                             <input 
+                                               className="form-input flex-1 bg-white text-xs border-emerald-100" 
+                                               value={item} 
+                                               onChange={(e) => {
+                                                 const newItems = [...items];
+                                                 newItems[idx] = e.target.value;
+                                                 setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
+                                               }}
+                                             />
+                                             <button type="button" onClick={() => {
+                                               const newItems = items.filter((_, i) => i !== idx);
+                                               setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
+                                             }} className="p-1 text-danger hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                                           </div>
+                                         ))}
+                                         <button type="button" onClick={() => {
+                                           const newItems = [...items, ""];
+                                           setCourseForm({ ...courseForm, whatYouWillLearn: JSON.stringify(newItems) });
+                                         }} className="text-[10px] font-bold text-emerald-600 hover:underline">+ เพิ่มรายการ</button>
+                                       </>
+                                     );
+                                   } catch (e) {
+                                     return <textarea rows={2} className="form-input w-full bg-white font-mono text-[10px]" value={courseForm.whatYouWillLearn} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillLearn: e.target.value })} />;
+                                   }
+                                 })()}
+                               </div>
                             </div>
+
+                            {/* What You'll Get Editor */}
                             <div>
-                               <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block">สิ่งที่จะได้รับ (JSON List)</label>
-                               <textarea rows={2} className="form-input w-full bg-white font-mono text-[10px]" value={courseForm.whatYouWillGet} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillGet: e.target.value })} />
+                               <label className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
+                                 <Layers size={14} className="text-primary"/> สิ่งที่จะได้รับในคอร์สนี้
+                               </label>
+                               <div className="space-y-2">
+                                 {(() => {
+                                   try {
+                                     const items = JSON.parse(courseForm.whatYouWillGet || '[]');
+                                     return (
+                                       <>
+                                         {items.map((item, idx) => (
+                                           <div key={idx} className="flex gap-1">
+                                             <input 
+                                               className="form-input flex-1 bg-white text-xs border-primary/20" 
+                                               value={item} 
+                                               onChange={(e) => {
+                                                 const newItems = [...items];
+                                                 newItems[idx] = e.target.value;
+                                                 setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
+                                               }}
+                                             />
+                                             <button type="button" onClick={() => {
+                                               const newItems = items.filter((_, i) => i !== idx);
+                                               setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
+                                             }} className="p-1 text-danger hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                                           </div>
+                                         ))}
+                                         <button type="button" onClick={() => {
+                                           const newItems = [...items, ""];
+                                           setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
+                                         }} className="text-[10px] font-bold text-primary hover:underline">+ เพิ่มรายการ</button>
+                                       </>
+                                     );
+                                   } catch (e) {
+                                     return <textarea rows={2} className="form-input w-full bg-white font-mono text-[10px]" value={courseForm.whatYouWillGet} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillGet: e.target.value })} />;
+                                   }
+                                 })()}
+                               </div>
                             </div>
                          </div>
                       </div>
