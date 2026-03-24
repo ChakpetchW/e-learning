@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Search, Edit, Trash2, MoreVertical, FileText, Video, Layers, X, ChevronRight, Play, Upload, Clock, MonitorPlay, Infinity as InfIcon, Award, PlayCircle, BookOpen, Image as ImageIcon } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, MoreVertical, FileText, Video, Layers, X, ChevronRight, Play, Upload, Clock, MonitorPlay, Infinity as InfIcon, Award, PlayCircle, BookOpen, Image as ImageIcon, ArrowUp, ArrowDown } from 'lucide-react';
 import { adminAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
 
 // --- ROBUST SUB-COMPONENTS FOR PREMIUM LISTS ---
@@ -208,6 +208,30 @@ const CourseManagement = () => {
       console.error('Fetch courses error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMoveCat = (index, direction) => {
+    const newCats = [...categories];
+    if (direction === -1 && index > 0) {
+      [newCats[index - 1], newCats[index]] = [newCats[index], newCats[index - 1]];
+    } else if (direction === 1 && index < newCats.length - 1) {
+      [newCats[index + 1], newCats[index]] = [newCats[index], newCats[index + 1]];
+    } else return;
+    
+    // update order numbers internally
+    newCats.forEach((c, idx) => c.order = idx);
+    setCategories(newCats);
+    handleSaveCatOrder(newCats);
+  };
+
+  const handleSaveCatOrder = async (orderedCats) => {
+    try {
+      const categoryIds = orderedCats.map(c => c.id);
+      await adminAPI.reorderCategories({ categoryIds });
+    } catch (error) {
+      console.error('Save order error:', error);
+      alert('บันทึกการเรียงลำดับล้มเหลว');
     }
   };
 
@@ -856,12 +880,16 @@ const CourseManagement = () => {
             <div className="flex-1 overflow-y-auto">
               <p className="text-xs font-bold text-muted mb-2 uppercase">รายการปัจจุบัน</p>
               <div className="flex flex-col gap-2">
-                {categories.map(cat => (
+                {categories.map((cat, index) => (
                   <div key={cat.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
                     <span className="text-sm font-medium">{cat.name}</span>
-                    <div className="flex gap-2">
-                      <button onClick={() => { setEditingCatId(cat.id); setCatForm({ name: cat.name, order: cat.order }); }} className="text-primary p-1 hover:bg-white rounded transition-colors"><Edit size={14} /></button>
-                      <button onClick={() => handleDeleteCat(cat.id)} className="text-danger p-1 hover:bg-white rounded transition-colors"><Trash2 size={14} /></button>
+                    <div className="flex gap-2 items-center">
+                      <div className="flex flex-col mr-2 bg-white rounded shadow-sm border border-slate-100 pb-[1px]">
+                         <button disabled={index === 0} onClick={() => handleMoveCat(index, -1)} className="text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400 p-0.5"><ArrowUp size={14} strokeWidth={3}/></button>
+                         <button disabled={index === categories.length - 1} onClick={() => handleMoveCat(index, 1)} className="text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400 p-0.5"><ArrowDown size={14} strokeWidth={3}/></button>
+                      </div>
+                      <button onClick={() => { setEditingCatId(cat.id); setCatForm({ name: cat.name, order: cat.order }); }} className="text-primary p-1.5 hover:bg-primary/10 rounded transition-colors"><Edit size={14} /></button>
+                      <button onClick={() => handleDeleteCat(cat.id)} className="text-danger p-1.5 hover:bg-red-50 rounded transition-colors"><Trash2 size={14} /></button>
                     </div>
                   </div>
                 ))}

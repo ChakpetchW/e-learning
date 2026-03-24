@@ -98,6 +98,7 @@ export const adminAPI = {
   createCategory: (data) => api.post('/admin/categories', data),
   updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
+  reorderCategories: (data) => api.put('/admin/categories/reorder', data),
 
   getLessons: (courseId) => api.get(`/admin/courses/${courseId}/lessons`),
   createLesson: (data) => api.post('/admin/lessons', data),

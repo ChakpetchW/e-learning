@@ -357,6 +357,23 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+const reorderCategories = async (req, res) => {
+  try {
+    const { categoryIds } = req.body;
+    const updates = categoryIds.map((id, index) => 
+      prisma.category.update({
+        where: { id },
+        data: { order: index }
+      })
+    );
+    await prisma.$transaction(updates);
+    res.json({ message: 'Categories reordered successfully' });
+  } catch (error) {
+    console.error('Reorder error:', error);
+    res.status(500).json({ message: 'Internal server error while reordering' });
+  }
+};
+
 // --- LESSON MANAGEMENT ---
 
 const getCourseLessons = async (req, res) => {
@@ -513,6 +530,7 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
+  reorderCategories,
   getAdminRewards,
   createReward,
   updateReward,

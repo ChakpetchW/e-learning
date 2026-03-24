@@ -19,6 +19,7 @@ router.delete('/courses/:id', adminController.deleteCourse);
 
 router.get('/categories', adminController.getCategories);
 router.post('/categories', adminController.createCategory);
+router.put('/categories/reorder', adminController.reorderCategories);
 router.put('/categories/:id', adminController.updateCategory);
 router.delete('/categories/:id', adminController.deleteCategory);
 
