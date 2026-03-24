@@ -310,22 +310,31 @@ const CourseDetail = () => {
 
                   <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col gap-4">
                      <h4 className="text-sm font-black text-slate-900 mb-1">สิ่งที่คุณจะได้รับ</h4>
-                     <div className="flex items-center gap-3 text-slate-600 text-[13.5px] font-medium">
-                        <MonitorPlay size={18} className="text-primary"/> 
-                        วิดีโอระดับ Full HD ความยาว {durationHours} ชั่วโมง
-                     </div>
-                     <div className="flex items-center gap-3 text-slate-600 text-[13.5px] font-medium">
-                        <FileText size={18} className="text-primary"/> 
-                        เอกสารประกอบการเรียนแจกฟรี
-                     </div>
-                     <div className="flex items-center gap-3 text-slate-600 text-[13.5px] font-medium">
-                        <InfinityIcon size={18} className="text-primary"/> 
-                        เข้าถึงเนื้อหาได้ตลอดชีพ ไม่มีวันหมดอายุ
-                     </div>
-                     <div className="flex items-center gap-3 text-slate-600 text-[13.5px] font-medium">
-                        <Award size={18} className="text-primary"/> 
-                        ใบรับรองการจบหลักสูตร (Certificate)
-                     </div>
+                     {(() => {
+                        const IconMap = {
+                           MonitorPlay: MonitorPlay,
+                           FileText: FileText,
+                           InfinityIcon: InfinityIcon,
+                           Award: Award,
+                           PlayCircle: PlayCircle,
+                           BookOpen: BookOpen
+                        };
+
+                        return whatYouGet.map((item, idx) => {
+                           // Support both string (old) and object (new)
+                           const isObj = typeof item === 'object' && item !== null && !item.$$typeof;
+                           const iconName = isObj ? item.icon : null;
+                           const text = (isObj ? item.text : item).replace('{durationHours}', durationHours);
+                           const IconComponent = IconMap[iconName] || MonitorPlay;
+
+                           return (
+                              <div key={idx} className="flex items-center gap-3 text-slate-600 text-[13.5px] font-medium">
+                                 {isObj ? <IconComponent size={18} className="text-primary"/> : (item.icon || <MonitorPlay size={18} className="text-primary"/>)}
+                                 {text}
+                              </div>
+                           );
+                        });
+                     })()}
                   </div>
                </div>
             </div>

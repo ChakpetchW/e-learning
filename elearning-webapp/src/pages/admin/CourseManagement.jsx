@@ -522,35 +522,66 @@ const CourseManagement = () => {
                             {/* What You'll Get Editor */}
                             <div>
                                <label className="text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
-                                 <Layers size={14} className="text-primary"/> สิ่งที่จะได้รับในคอร์สนี้
+                                 <Layers size={14} className="text-primary"/> สิ่งที่จะได้รับในคอร์สนี้ (พร้อมไอคอน)
                                </label>
                                <div className="space-y-2">
                                  {(() => {
                                    try {
-                                     const items = JSON.parse(courseForm.whatYouWillGet || '[]');
+                                     // Support both old string array and new object array
+                                     const rawItems = JSON.parse(courseForm.whatYouWillGet || '[]');
+                                     const items = rawItems.map(item => typeof item === 'string' ? { icon: 'MonitorPlay', text: item } : item);
+                                     
+                                     const iconOptions = [
+                                       { val: 'MonitorPlay', icon: <MonitorPlay size={14}/> },
+                                       { val: 'FileText', icon: <FileText size={14}/> },
+                                       { val: 'InfinityIcon', icon: <InfinityIcon size={14}/> },
+                                       { val: 'Award', icon: <Award size={14}/> },
+                                       { val: 'PlayCircle', icon: <PlayCircle size={14}/> },
+                                       { val: 'BookOpen', icon: <BookOpen size={14}/> }
+                                     ];
+
                                      return (
                                        <>
                                          {items.map((item, idx) => (
-                                           <div key={idx} className="flex gap-1">
-                                             <input 
-                                               className="form-input flex-1 bg-white text-xs border-primary/20" 
-                                               value={item} 
-                                               onChange={(e) => {
-                                                 const newItems = [...items];
-                                                 newItems[idx] = e.target.value;
+                                           <div key={idx} className="flex flex-col gap-1 p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                             <div className="flex gap-2 items-center">
+                                               <select 
+                                                 className="bg-slate-50 border-none text-[10px] font-bold rounded p-1"
+                                                 value={item.icon || 'MonitorPlay'}
+                                                 onChange={(e) => {
+                                                   const newItems = [...items];
+                                                   newItems[idx] = { ...item, icon: e.target.value };
+                                                   setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
+                                                 }}
+                                               >
+                                                 <option value="MonitorPlay">Video</option>
+                                                 <option value="FileText">Document</option>
+                                                 <option value="InfinityIcon">Lifetime</option>
+                                                 <option value="Award">Certificate</option>
+                                                 <option value="PlayCircle">Play</option>
+                                                 <option value="BookOpen">Lessons</option>
+                                               </select>
+                                               <input 
+                                                 className="form-input flex-1 border-none bg-transparent text-xs p-1" 
+                                                 placeholder="คำบรรยาย..."
+                                                 value={item.text} 
+                                                 onChange={(e) => {
+                                                   const newItems = [...items];
+                                                   newItems[idx] = { ...item, text: e.target.value };
+                                                   setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
+                                                 }}
+                                               />
+                                               <button type="button" onClick={() => {
+                                                 const newItems = items.filter((_, i) => i !== idx);
                                                  setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                               }}
-                                             />
-                                             <button type="button" onClick={() => {
-                                               const newItems = items.filter((_, i) => i !== idx);
-                                               setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                             }} className="p-1 text-danger hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                                               }} className="p-1 text-danger hover:bg-red-50 rounded"><Trash2 size={14}/></button>
+                                             </div>
                                            </div>
                                          ))}
                                          <button type="button" onClick={() => {
-                                           const newItems = [...items, ""];
+                                           const newItems = [...items, { icon: 'MonitorPlay', text: '' }];
                                            setCourseForm({ ...courseForm, whatYouWillGet: JSON.stringify(newItems) });
-                                         }} className="text-[10px] font-bold text-primary hover:underline">+ เพิ่มรายการ</button>
+                                         }} className="text-[10px] font-bold text-primary hover:underline">+ เพิ่มรายการใหม่</button>
                                        </>
                                      );
                                    } catch (e) {
