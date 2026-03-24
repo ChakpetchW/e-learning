@@ -108,7 +108,7 @@ const CourseList = () => {
 
       {/* Categories Horizontal Scroll */}
       <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 items-center">
-        {categories.slice(0, 8).map(cat => (
+        {categories.slice(0, 4).map(cat => (
           <button 
             key={cat.id}
             onClick={() => setActiveCat(cat.name)}
@@ -121,7 +121,7 @@ const CourseList = () => {
             {cat.name}
           </button>
         ))}
-        {categories.length > 8 && (
+        {categories.length > 4 && (
           <button 
             onClick={() => setIsCatModalOpen(true)}
             className="shrink-0 px-6 py-2.5 bg-primary/5 text-primary border border-primary/20 rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"

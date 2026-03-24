@@ -270,7 +270,7 @@ const Home = () => {
                >
                  All Courses
                </button>
-               {categories.slice(0, 7).map(cat => (
+               {categories.slice(0, 4).map(cat => (
                  <button
                    key={cat.id}
                    onClick={() => navigate(`/user/courses?category=${encodeURIComponent(cat.name)}`)}
@@ -280,7 +280,7 @@ const Home = () => {
                  </button>
                ))}
 
-               {categories.length > 7 && (
+               {categories.length > 4 && (
                  <button
                    onClick={() => setIsCatModalOpen(true)}
                    className="shrink-0 px-6 md:px-8 py-3.5 bg-primary/5 text-primary border border-primary/20 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"
