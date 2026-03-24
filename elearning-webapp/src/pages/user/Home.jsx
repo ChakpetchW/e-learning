@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { PlayCircle, Clock, ChevronRight, Target, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
+import CategorySearchModal from '../../components/common/CategorySearchModal';
+import { Grid } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ const Home = () => {
   const [points, setPoints] = useState(0);
   const [weeklyGoal, setWeeklyGoal] = useState(1);
   const [pointsLoading, setPointsLoading] = useState(true);
+  const [isCatModalOpen, setIsCatModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -260,25 +263,34 @@ const Home = () => {
               <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest">{categories.length} Topics</p>
            </div>
            
-           <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 flex-nowrap items-center">
-              <button 
-                onClick={() => navigate('/user/courses')}
-                className="shrink-0 px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-200 active:scale-95 transition-all whitespace-nowrap min-w-fit"
-              >
-                All Courses
-              </button>
-              {categories.map(cat => (
-                <button 
-                  key={cat.id} 
-                  onClick={() => navigate(`/user/courses?category=${encodeURIComponent(cat.name)}`)}
-                  className="shrink-0 px-6 md:px-8 py-3.5 bg-white text-slate-600 border border-slate-200 rounded-2xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:border-primary hover:text-primary active:scale-95 transition-all shadow-sm whitespace-nowrap min-w-[100px] md:min-w-[140px]"
-                >
-                  {cat.name}
-                </button>
-              ))}
+            <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 flex-nowrap items-center text-xs">
+               <button 
+                 onClick={() => navigate('/user/courses')}
+                 className="shrink-0 px-6 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-200 active:scale-95 transition-all whitespace-nowrap min-w-fit"
+               >
+                 All Courses
+               </button>
+               {categories.slice(0, 7).map(cat => (
+                 <button
+                   key={cat.id}
+                   onClick={() => navigate(`/user/courses?category=${encodeURIComponent(cat.name)}`)}
+                   className="shrink-0 px-6 md:px-8 py-3.5 bg-white text-slate-600 border border-slate-200 rounded-2xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:border-primary hover:text-primary active:scale-95 transition-all shadow-sm whitespace-nowrap min-w-[100px] md:min-w-[140px]"
+                 >
+                   {cat.name}
+                 </button>
+               ))}
+
+               {categories.length > 7 && (
+                 <button
+                   onClick={() => setIsCatModalOpen(true)}
+                   className="shrink-0 px-6 md:px-8 py-3.5 bg-primary/5 text-primary border border-primary/20 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"
+                 >
+                   <Grid size={14} /> ดูทั้งหมด
+                 </button>
+               )}
            </div>
 
-           <div 
+           <div
              onClick={() => navigate('/user/rewards')}
              className="mt-1 md:mt-2 p-7 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-slate-900 text-white flex items-center justify-between overflow-hidden relative group cursor-pointer shadow-lg shadow-slate-200"
            >
@@ -337,6 +349,15 @@ const Home = () => {
 
       {/* spacer for bottom padding */}
       <div className="h-8"></div>
+
+      {/* Categories Search Modal */}
+      <CategorySearchModal 
+        isOpen={isCatModalOpen}
+        onClose={() => setIsCatModalOpen(false)}
+        categories={categories}
+        courses={courses}
+        onSelect={(catName) => navigate(`/user/courses?category=${encodeURIComponent(catName)}`)}
+      />
     </div>
   );
 };

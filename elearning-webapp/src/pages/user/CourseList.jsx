@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, Clock, Star, PlayCircle, X, ChevronDown } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { userAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
+import CategorySearchModal from '../../components/common/CategorySearchModal';
+import { Grid } from 'lucide-react';
 
 const CourseList = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const CourseList = () => {
   // UI State
   const [loading, setLoading] = useState(true);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [isCatModalOpen, setIsCatModalOpen] = useState(false);
 
   useEffect(() => {
     if (urlCategory) {
@@ -104,20 +107,28 @@ const CourseList = () => {
       </div>
 
       {/* Categories Horizontal Scroll */}
-      <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
-        {categories.map(cat => (
+      <div className="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 items-center">
+        {categories.slice(0, 8).map(cat => (
           <button 
             key={cat.id}
             onClick={() => setActiveCat(cat.name)}
-             className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all min-w-[100px] ${
-               activeCat === cat.name 
-                 ? 'bg-primary text-white shadow-md shadow-primary/30' 
-                 : 'bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-100'
-             }`}
-           >
-             {cat.name}
-           </button>
+            className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-bold transition-all min-w-[100px] ${
+              activeCat === cat.name 
+                ? 'bg-primary text-white shadow-md shadow-primary/30' 
+                : 'bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-100'
+            }`}
+          >
+            {cat.name}
+          </button>
         ))}
+        {categories.length > 8 && (
+          <button 
+            onClick={() => setIsCatModalOpen(true)}
+            className="shrink-0 px-6 py-2.5 bg-primary/5 text-primary border border-primary/20 rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary/10 active:scale-95 transition-all shadow-sm whitespace-nowrap flex items-center gap-2"
+          >
+            <Grid size={14} /> อื่นๆ
+          </button>
+        )}
       </div>
       </div>
 
@@ -289,6 +300,16 @@ const CourseList = () => {
         </div>
       )}
 
+      {/* Categories Search Modal */}
+      <CategorySearchModal 
+        isOpen={isCatModalOpen}
+        onClose={() => setIsCatModalOpen(false)}
+        categories={categories.filter(c => c.id !== 'ALL')} // Exclude "All" special category
+        courses={courses}
+        onSelect={(catName) => {
+            setActiveCat(catName);
+        }}
+      />
     </div>
   );
 };
