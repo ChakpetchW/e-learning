@@ -12,6 +12,7 @@ const CourseDetail = () => {
   
   // UI State
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -57,6 +58,31 @@ const CourseDetail = () => {
 
   const durationHours = course.lessons?.reduce((acc, l) => acc + (parseInt(l.duration)||0), 0) || 2;
 
+  // Parse JSON helper
+  const tryParse = (str, fallback) => {
+    try {
+      if (!str) return fallback;
+      const parsed = JSON.parse(str);
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+
+  const learningPoints = tryParse(course?.whatYouWillLearn, [
+    "ทักษะที่สามารถนำไปประยุกต์ใช้ในการทำงานได้จริงทันที",
+    "ทำความเข้าใจพื้นฐานที่แน่นหนา และต่อยอดไปสู่ระดับสูง",
+    "เทคนิคและเคล็ดลับจากประสบการณ์จริงของผู้เชี่ยวชาญ",
+    "วิธีคิดและแก้ปัญหาเมื่อเจอสถานการณ์จริง"
+  ]);
+
+  const whatYouGet = tryParse(course?.whatYouWillGet, [
+    { icon: <MonitorPlay size={18} className="text-primary"/>, text: `วิดีโอระดับ Full HD ความยาว {durationHours} ชั่วโมง` },
+    { icon: <FileText size={18} className="text-primary"/>, text: "เอกสารประกอบการเรียนแจกฟรี" },
+    { icon: <InfinityIcon size={18} className="text-primary"/>, text: "เข้าถึงเนื้อหาได้ตลอดชีพ ไม่มีวันหมดอายุ" },
+    { icon: <Award size={18} className="text-primary"/>, text: "ใบรับรองการจบหลักสูตร (Certificate)" }
+  ]);
+
   return (
     <div className="flex flex-col min-h-full pb-20 md:pb-32 bg-slate-50 relative -mt-4 -mx-4 md:mt-0 md:mx-0">
       
@@ -87,16 +113,16 @@ const CourseDetail = () => {
                <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm font-bold">
                   <div className="flex items-center gap-1.5 text-amber-400 bg-amber-400/10 px-3 py-1.5 rounded-md">
                      <Star size={16} className="fill-amber-400" />
-                     <span className="text-white text-base">4.8</span>
-                     <span className="text-slate-400 ml-1 font-medium">(1,240 รีวิว)</span>
+                     <span className="text-white text-base">{course.rating || 4.8}</span>
+                     <span className="text-slate-400 ml-1 font-medium">({(course.reviewCount || 1240).toLocaleString()} รีวิว)</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-slate-300">
                      <MonitorPlay size={18} className="text-slate-400" />
-                     <span>ผู้เรียน 5,000+ คน</span>
+                     <span>ผู้เรียน {(course.studentCount || 5000).toLocaleString()}+ คน</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-slate-300">
                      <Clock size={18} className="text-slate-400" />
-                     <span>ความยาว {durationHours} ชั่วโมง</span>
+                     <span>ความยาว {course.totalDuration || `${durationHours} ชั่วโมง`}</span>
                   </div>
                </div>
             </div>
@@ -130,12 +156,7 @@ const CourseDetail = () => {
             <section className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6">สิ่งที่คุณจะได้เรียนรู้ในคอร์สนี้</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                  {[
-                     "ทักษะที่สามารถนำไปประยุกต์ใช้ในการทำงานได้จริงทันที",
-                     "ทำความเข้าใจพื้นฐานที่แน่นหนา และต่อยอดไปสู่ระดับสูง",
-                     "เทคนิคและเคล็ดลับจากประสบการณ์จริงของผู้เชี่ยวชาญ",
-                     "วิธีคิดและแก้ปัญหาเมื่อเจอสถานการณ์จริง"
-                  ].map((text, idx) => (
+                  {learningPoints.map((text, idx) => (
                      <div key={idx} className="flex items-start gap-3">
                         <Check size={20} className="text-emerald-500 shrink-0 mt-0.5" strokeWidth={3} />
                         <span className="text-[15px] font-medium text-slate-600 leading-relaxed">{text}</span>
@@ -200,12 +221,20 @@ const CourseDetail = () => {
             <section className="mb-10">
                <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-4 px-2">ผู้สอน (Instructor)</h2>
                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left">
-                  <div className="w-24 h-24 rounded-full bg-slate-200 shrink-0 border-4 border-white shadow-md"></div>
+                  <div className="w-24 h-24 rounded-full bg-slate-200 shrink-0 border-4 border-white shadow-md overflow-hidden">
+                     {course.instructorAvatar ? (
+                        <img src={getFullUrl(course.instructorAvatar)} alt="Instructor" className="w-full h-full object-cover" />
+                     ) : (
+                        <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl uppercase">
+                           {course.instructorName?.charAt(0) || 'I'}
+                        </div>
+                     )}
+                  </div>
                   <div>
-                     <h3 className="text-lg font-black text-slate-900 mb-1">ทีมงานวิทยากรผู้เชี่ยวชาญ</h3>
-                     <p className="text-[13px] font-bold text-primary mb-3">Enterprise Instructor</p>
+                     <h3 className="text-lg font-black text-slate-900 mb-1">{course.instructorName || 'ทีมงานวิทยากรผู้เชี่ยวชาญ'}</h3>
+                     <p className="text-[13px] font-bold text-primary mb-3">{course.instructorRole || 'Enterprise Instructor'}</p>
                      <p className="text-sm font-medium text-slate-500 leading-relaxed">
-                        ทีมงานผู้มีความเชี่ยวชาญเฉพาะด้านที่ผ่านประสบการณ์การทำงานในองค์กรชั้นนำ พร้อมถ่ายทอดทักษะระดับมืออาชีพให้คุณ
+                        {course.instructorBio || "ทีมงานผู้มีความเชี่ยวชาญเฉพาะด้านที่ผ่านประสบการณ์การทำงานในองค์กรชั้นนำ พร้อมถ่ายทอดทักษะระดับมืออาชีพให้คุณ"}
                      </p>
                   </div>
                </div>
@@ -218,13 +247,28 @@ const CourseDetail = () => {
                
                {/* Video Thumbnail Area */}
                <div className="relative aspect-video bg-slate-900 group cursor-pointer overflow-hidden pb-1">
-                  <img src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} alt="Thumbnail" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center mb-2 group-hover:bg-primary transition-colors duration-300 shadow-xl">
-                        <PlayCircle size={32} className="text-white ml-1" strokeWidth={2}/>
-                     </div>
-                     <span className="text-white text-xs font-bold tracking-widest uppercase drop-shadow-md">ดูตัวอย่างคอร์สฟรี</span>
-                  </div>
+                  {showVideo && course.previewVideoUrl ? (
+                     <iframe 
+                       className="w-full h-full"
+                       src={course.previewVideoUrl.includes('youtube.com') || course.previewVideoUrl.includes('youtu.be') 
+                         ? `https://www.youtube.com/embed/${course.previewVideoUrl.split('v=')[1]?.split('&')[0] || course.previewVideoUrl.split('/').pop()}?autoplay=1` 
+                         : course.previewVideoUrl}
+                       title="Course Preview"
+                       frameBorder="0"
+                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                       allowFullScreen
+                     ></iframe>
+                  ) : (
+                     <>
+                       <img src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} alt="Thumbnail" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700" />
+                       <div className="absolute inset-0 flex flex-col items-center justify-center" onClick={() => course.previewVideoUrl && setShowVideo(true)}>
+                          <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center mb-2 group-hover:bg-primary transition-colors duration-300 shadow-xl">
+                             <PlayCircle size={32} className="text-white ml-1" strokeWidth={2}/>
+                          </div>
+                          <span className="text-white text-xs font-bold tracking-widest uppercase drop-shadow-md">ดูตัวอย่างคอร์สฟรี</span>
+                       </div>
+                     </>
+                  )}
                </div>
 
                {/* Pricing & Actions */}

@@ -67,9 +67,22 @@ const getAdminCourses = async (req, res) => {
 
 const createCourse = async (req, res) => {
   try {
-    const { title, description, categoryId, points, status, image } = req.body;
+    const { 
+      title, description, categoryId, points, status, image, 
+      instructorName, instructorRole, instructorAvatar, instructorBio,
+      previewVideoUrl, totalDuration, whatYouWillLearn, whatYouWillGet,
+      rating, reviewCount, studentCount
+    } = req.body;
+    
     const course = await prisma.course.create({
-      data: { title, description, categoryId, points, status, image }
+      data: { 
+        title, description, categoryId, points, status, image, 
+        instructorName, instructorRole, instructorAvatar, instructorBio,
+        previewVideoUrl, totalDuration, whatYouWillLearn, whatYouWillGet,
+        rating: rating !== undefined ? parseFloat(rating) : undefined,
+        reviewCount: reviewCount !== undefined ? parseInt(reviewCount) : undefined,
+        studentCount: studentCount !== undefined ? parseInt(studentCount) : undefined
+      }
     });
     res.status(201).json(course);
   } catch (error) {
@@ -81,6 +94,13 @@ const updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
+
+    // Parse numeric fields if they exist
+    if (data.rating !== undefined) data.rating = parseFloat(data.rating);
+    if (data.reviewCount !== undefined) data.reviewCount = parseInt(data.reviewCount);
+    if (data.studentCount !== undefined) data.studentCount = parseInt(data.studentCount);
+    if (data.points !== undefined) data.points = parseInt(data.points);
+
     const course = await prisma.course.update({
       where: { id },
       data

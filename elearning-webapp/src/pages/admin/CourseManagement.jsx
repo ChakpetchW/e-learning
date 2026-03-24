@@ -12,7 +12,23 @@ const CourseManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [courseForm, setCourseForm] = useState({ title: '', description: '', categoryId: '', points: 100, image: '' });
+  const [courseForm, setCourseForm] = useState({ 
+    title: '', 
+    description: '', 
+    categoryId: '', 
+    points: 100, 
+    image: '',
+    instructorName: 'ทีมงานวิทยากรผู้เชี่ยวชาญ',
+    instructorRole: 'Enterprise Instructor',
+    instructorBio: 'ทีมงานผู้มีความเชี่ยวชาญเฉพาะด้านที่ผ่านประสบการณ์การทำงานในองค์กรชั้นนำ พร้อมถ่ายทอดทักษะระดับมืออาชีพให้คุณ',
+    previewVideoUrl: '',
+    totalDuration: '',
+    whatYouWillLearn: '[]',
+    whatYouWillGet: '[]',
+    rating: 4.8,
+    reviewCount: 1240,
+    studentCount: 5000
+  });
   const [activeTab, setActiveTab] = useState('basic'); // 'basic' | 'content' | 'reports'
   const [quizReports, setQuizReports] = useState([]);
   const [loadingReports, setLoadingReports] = useState(false);
@@ -106,7 +122,23 @@ const CourseManagement = () => {
   };
 
   const resetCourseForm = () => {
-    setCourseForm({ title: '', description: '', categoryId: '', points: 100, image: '' });
+    setCourseForm({ 
+      title: '', 
+      description: '', 
+      categoryId: '', 
+      points: 100, 
+      image: '',
+      instructorName: 'ทีมงานวิทยากรผู้เชี่ยวชาญ',
+      instructorRole: 'Enterprise Instructor',
+      instructorBio: 'ทีมงานผู้มีความเชี่ยวชาญเฉพาะด้านที่ผ่านประสบการณ์การทำงานในองค์กรชั้นนำ พร้อมถ่ายทอดทักษะระดับมืออาชีพให้คุณ',
+      previewVideoUrl: '',
+      totalDuration: '',
+      whatYouWillLearn: '[]',
+      whatYouWillGet: '[]',
+      rating: 4.8,
+      reviewCount: 1240,
+      studentCount: 5000
+    });
     setIsEditing(false);
     setEditingId(null);
   };
@@ -119,7 +151,17 @@ const CourseManagement = () => {
       description: course.description || '',
       categoryId: course.categoryId || '',
       points: course.points || 0,
-      image: course.image || ''
+      image: course.image || '',
+      instructorName: course.instructorName || 'ทีมงานวิทยากรผู้เชี่ยวชาญ',
+      instructorRole: course.instructorRole || 'Enterprise Instructor',
+      instructorBio: course.instructorBio || '',
+      previewVideoUrl: course.previewVideoUrl || '',
+      totalDuration: course.totalDuration || '',
+      whatYouWillLearn: course.whatYouWillLearn || '[]',
+      whatYouWillGet: course.whatYouWillGet || '[]',
+      rating: course.rating || 4.8,
+      reviewCount: course.reviewCount || 1240,
+      studentCount: course.studentCount || 5000
     });
     setActiveTab('basic');
     setShowModal(true);
@@ -262,6 +304,12 @@ const CourseManagement = () => {
                   เนื้อหาหลักสูตร ({lessons.length})
                 </button>
                 <button
+                  onClick={() => setActiveTab('premium')}
+                  className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'premium' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
+                >
+                  ตั้งค่าการแสดงผล (Premium)
+                </button>
+                <button
                   onClick={() => { setActiveTab('reports'); fetchQuizReports(editingId); }}
                   className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'reports' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
                 >
@@ -393,6 +441,75 @@ const CourseManagement = () => {
                   <div className="flex gap-2 mt-4">
                     <button type="button" onClick={() => setShowModal(false)} className="btn btn-outline flex-1">ยกเลิก</button>
                     <button type="submit" className="btn btn-primary flex-1">บันทึกข้อมูล</button>
+                  </div>
+                </form>
+              ) : activeTab === 'premium' ? (
+                <form onSubmit={handleSaveCourse} className="flex flex-col gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Instructor Info */}
+                    <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-primary flex items-center gap-2 border-b pb-2 mb-4"><Plus size={16}/> ข้อมูลผู้สอน</h4>
+                      <div>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">ชื่อผู้สอน/ทีมงาน</label>
+                        <input type="text" className="form-input w-full bg-white" value={courseForm.instructorName} onChange={(e) => setCourseForm({ ...courseForm, instructorName: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">ตำแหน่ง (Role)</label>
+                        <input type="text" className="form-input w-full bg-white" value={courseForm.instructorRole} onChange={(e) => setCourseForm({ ...courseForm, instructorRole: e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">ประวัติย่อ (Bio)</label>
+                        <textarea rows={3} className="form-input w-full bg-white" value={courseForm.instructorBio} onChange={(e) => setCourseForm({ ...courseForm, instructorBio: e.target.value })} />
+                      </div>
+                    </div>
+
+                    {/* Media & Stats */}
+                    <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-primary flex items-center gap-2 border-b pb-2 mb-4"><Video size={16}/> สื่อและสถิติ (Display)</h4>
+                      <div>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">วิดีโอตัวอย่าง (YouTube URL)</label>
+                        <input type="text" className="form-input w-full bg-white" value={courseForm.previewVideoUrl} onChange={(e) => setCourseForm({ ...courseForm, previewVideoUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." />
+                      </div>
+                      <div>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">ความยาวคอร์ส (แสดงผล)</label>
+                        <input type="text" className="form-input w-full bg-white" value={courseForm.totalDuration} onChange={(e) => setCourseForm({ ...courseForm, totalDuration: e.target.value })} placeholder="เช่น 120 ชม. หรือ 15 ชม. 30 นาที" />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-500 uppercase">เรตติ้ง</label>
+                          <input type="number" step="0.1" className="form-input w-full bg-white text-sm" value={courseForm.rating} onChange={(e) => setCourseForm({ ...courseForm, rating: e.target.value })} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-500 uppercase">รีวิว (คน)</label>
+                          <input type="number" className="form-input w-full bg-white text-sm" value={courseForm.reviewCount} onChange={(e) => setCourseForm({ ...courseForm, reviewCount: e.target.value })} />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-500 uppercase">ผู้เรียน (คน)</label>
+                          <input type="number" className="form-input w-full bg-white text-sm" value={courseForm.studentCount} onChange={(e) => setCourseForm({ ...courseForm, studentCount: e.target.value })} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* JSON Lists */}
+                    <div className="md:col-span-2 space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-primary flex items-center gap-2 border-b pb-2 mb-4"><FileText size={16}/> รายละเอียดหลักสูตร (List Items)</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-bold text-gray-700 block mb-1">สิ่งที่จะได้เรียนรู้ (JSON Array)</label>
+                          <textarea rows={4} className="form-input w-full bg-white font-mono text-xs" value={courseForm.whatYouWillLearn} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillLearn: e.target.value })} placeholder='["หัวข้อที่ 1", "หัวข้อที่ 2"]' />
+                          <p className="text-[10px] text-muted mt-1">ใส่เป็น JSON Array เช่น ["เรียนรู้ A", "เก่ง B"]</p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-bold text-gray-700 block mb-1">สิ่งที่จะได้รับ (JSON Array)</label>
+                          <textarea rows={4} className="form-input w-full bg-white font-mono text-xs" value={courseForm.whatYouWillGet} onChange={(e) => setCourseForm({ ...courseForm, whatYouWillGet: e.target.value })} placeholder='["เนื้อหา HD", "ใบเซอร์"]' />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setShowModal(false)} className="btn btn-outline flex-1">ยกเลิก</button>
+                    <button type="submit" className="btn btn-primary flex-1">บันทึกตั้งค่าพรีเมียม</button>
                   </div>
                 </form>
               ) : (

@@ -36,6 +36,20 @@ model Course {
   points      Int      @default(0)
   status      String   @default("DRAFT") // "DRAFT" | "PUBLISHED"
   image       String?
+  
+  // Premium Fields
+  instructorName   String?   @default("ทีมงานวิทยากรผู้เชี่ยวชาญ")
+  instructorRole   String?   @default("Enterprise Instructor")
+  instructorAvatar String?
+  instructorBio    String?   @default("ทีมงานผู้มีความเชี่ยวชาญเฉพาะด้านที่ผ่านประสบการณ์การทำงานในองค์กรชั้นนำ พร้อมถ่ายทอดทักษะระดับมืออาชีพให้คุณ")
+  previewVideoUrl  String?   // YouTube embed or Vercel URL
+  totalDuration    String?   // override e.g. "120 ชม."
+  whatYouWillLearn String?   @db.Text // JSON string list
+  whatYouWillGet   String?   @db.Text // JSON string list
+  rating           Float     @default(4.8)
+  reviewCount      Int       @default(1240)
+  studentCount     Int       @default(5000)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
