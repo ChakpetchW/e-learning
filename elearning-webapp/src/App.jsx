@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Layouts
 import UserLayout from './components/layout/UserLayout';
@@ -31,7 +32,8 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
-    <Routes>
+    <>
+      <Routes>
       {/* Root Redirect - Check for existing session */}
       <Route path="/" element={
         localStorage.getItem('token') ? (
@@ -74,7 +76,9 @@ function App() {
 
       {/* Fallback */}
       <Route path="*" element={<div className="p-6 text-center">404 - Page Not Found</div>} />
-    </Routes>
+      </Routes>
+      <SpeedInsights />
+    </>
   );
 }
 
