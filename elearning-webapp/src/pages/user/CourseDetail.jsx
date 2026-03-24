@@ -86,9 +86,16 @@ const CourseDetail = () => {
   return (
     <div className="flex flex-col min-h-full pb-20 md:pb-32 bg-slate-50 relative -mt-4 -mx-4 md:mt-0 md:mx-0">
       
-      {/* 1. HERO BANNER (Full Width, Deep Charcoal) */}
-      <div className="bg-slate-900 text-white pt-10 pb-16 md:pt-16 md:pb-32 px-5 md:px-8 xl:px-0">
-         <div className="max-w-6xl mx-auto flex flex-col md:flex-row relative">
+      {/* 1. HERO BANNER */}
+      <div className="relative bg-slate-900 text-white pt-10 pb-16 md:pt-16 md:pb-32 px-5 md:px-8 xl:px-0 overflow-hidden">
+         {/* Dynamic Background Image with Blur and Overlay */}
+         <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[80px] opacity-50 transform scale-125"
+            style={{ backgroundImage: `url(${course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE})` }}
+         />
+         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40" />
+         
+         <div className="max-w-6xl mx-auto flex flex-col md:flex-row relative z-10">
             
             {/* Left Content (Text) */}
             <div className="w-full lg:w-[60%] lg:pr-12 z-10">
