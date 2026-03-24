@@ -165,193 +165,205 @@ const LessonPlayer = () => {
         </div>
       </div>
 
-      {/* Content Section - Professional & Clear */}
-      <div className="bg-white md:bg-transparent px-6 py-10 md:px-0 md:py-12 relative z-10">
+      {/* Unified Content Container - Premium & Professional */}
+      <div className="bg-white md:border md:border-slate-100 md:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] md:rounded-[3rem] -mt-8 md:mt-8 relative z-30 overflow-hidden">
         
-        {/* Lesson Metadata */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
-                {lesson.type === 'video' ? <Play size={12} fill="currentColor"/> : <FileText size={12}/>} {lesson.type || 'Video'}
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
-                <Clock size={12}/> {lesson.duration || '10'}m
-              </span>
+        <div className="px-6 py-10 md:p-12">
+          {/* Lesson Metadata & Title */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div className="flex-1">
+              <div className="flex items-center gap-2.5 mb-5">
+                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-primary rounded-lg text-[10px] font-black uppercase tracking-[0.2em] border border-primary/10">
+                  {lesson.type === 'video' ? <Play size={12} fill="currentColor"/> : <FileText size={12}/>} {lesson.type || 'Video'}
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] border border-slate-100">
+                  <Clock size={12}/> {lesson.duration || '10'}m
+                </span>
+              </div>
+              <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">{lesson.title}</h1>
             </div>
-            <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight uppercase">{lesson.title}</h1>
-          </div>
-          
-          {completed && (
-            <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-2xl border border-emerald-100 shadow-sm animate-fade-in shrink-0">
-              <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white">
-                <CheckCircle size={14} strokeWidth={3} />
-              </div>
-              <span className="text-sm font-bold text-emerald-700">Completed</span>
-            </div>
-          )}
-        </div>
-
-        <div className="h-px w-full bg-slate-100 mb-12"></div>
-
-        {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-8">
-            {lesson.type === 'quiz' ? (
-              <div className="flex flex-col gap-8">
-                {!quizResult && (
-                  <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 flex items-start gap-5 shadow-2xl">
-                    <div className="w-10 h-10 bg-primary/20 text-primary rounded-full flex items-center justify-center shrink-0 font-black border border-primary/20">i</div>
-                    <div>
-                      <p className="font-bold text-white mb-1">เกณฑ์การผ่านบทเรียน</p>
-                      <p className="text-sm text-slate-400 leading-relaxed">คุณต้องได้คะแนนอย่างน้อย {lesson.passScore || 60}% ({Math.ceil((lesson.passScore || 60)/100 * (lesson.questions?.length || 0))} ข้อ) จากทั้งหมด {lesson.questions?.length || 0} ข้อ</p>
-                    </div>
-                  </div>
-                )}
-
-                {quizResult && (
-                  <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 animate-celebrate shadow-2xl flex flex-col items-center gap-4 text-center ${
-                    quizResult.passed ? 'bg-white border-emerald-100' : 'bg-red-50/50 border-red-100'
-                  }`}>
-                     <div className={`w-20 h-20 rounded-full flex items-center justify-center text-white shadow-xl mb-2 ${quizResult.passed ? 'bg-emerald-500 shadow-emerald-200' : 'bg-red-500 shadow-red-200'}`}>
-                        {quizResult.passed ? <CheckCircle size={40} strokeWidth={2.5}/> : <div className="text-3xl font-black">!</div>}
-                     </div>
-                     <h3 className={`text-3xl font-black tracking-tighter ${quizResult.passed ? 'text-emerald-600' : 'text-red-600'}`}>
-                       {quizResult.passed ? 'Excellent Job!' : 'Keep Practicing'}
-                     </h3>
-                     <div className="flex flex-col">
-                        <p className="text-5xl font-black text-slate-900">{quizResult.scorePercent}%</p>
-                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-1">Your Score</p>
-                     </div>
-                     
-                     <button onClick={() => { setQuizResult(null); setAnswers({}); }} className="mt-4 px-8 py-3 rounded-xl font-bold transition-all border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm">
-                       {quizResult.passed ? 'Retry to Review' : 'Try Again'}
-                     </button>
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-6">
-                  {lesson.questions?.map((q, idx) => {
-                    const isSubmitted = !!quizResult;
-                    const userA = answers[q.id];
-                    const correctA = quizResult?.correctAnswers?.[q.id];
-                    const isCorrect = userA === correctA;
-                    const isWrong = userA && userA !== correctA;
-                    
-                    return (
-                      <div key={q.id} className={`bg-white border-2 rounded-[2rem] p-8 transition-all ${isSubmitted && isWrong ? 'border-red-100 bg-red-50/10' : isSubmitted && isCorrect ? 'border-emerald-100 bg-emerald-50/10' : 'border-slate-100 shadow-sm'}`}>
-                        <div className="flex justify-between items-start mb-8">
-                          <h4 className="text-lg font-bold text-slate-900 leading-relaxed flex gap-4">
-                            <span className="shrink-0 w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm font-black">{idx + 1}</span>
-                            {q.text}
-                          </h4>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                          {q.choices.map(c => {
-                            let choiceState = "normal";
-                            if (isSubmitted) {
-                              if (c.id === correctA) choiceState = "correct";
-                              else if (c.id === userA) choiceState = "wrong";
-                              else choiceState = "untouched";
-                            } else if (userA === c.id) {
-                              choiceState = "selected";
-                            }
-
-                            return (
-                              <label
-                                key={c.id}
-                                onClick={() => !isSubmitted && setAnswers({ ...answers, [q.id]: c.id })}
-                                className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                                  choiceState === "selected" ? "border-primary bg-primary/5 ring-4 ring-primary/5" :
-                                  choiceState === "correct" ? "border-emerald-500 bg-emerald-50" :
-                                  choiceState === "wrong" ? "border-red-400 bg-red-50 opacity-80" :
-                                  choiceState === "untouched" ? "border-slate-50 bg-slate-50 opacity-40 grayscale" :
-                                  "border-slate-100 hover:border-slate-300"
-                                } hover:scale-[1.01] active:scale-[0.99]`}
-                              >
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                                  choiceState === "selected" ? "border-primary bg-primary text-white" :
-                                  choiceState === "correct" ? "border-emerald-500 bg-emerald-500 text-white" :
-                                  choiceState === "wrong" ? "border-red-400 bg-red-400 text-white" :
-                                  "border-slate-300 bg-white"
-                                }`}>
-                                  {choiceState === "selected" && <div className="w-2 h-2 bg-white rounded-full"></div>}
-                                  {choiceState === "correct" && <CheckCircle size={14} strokeWidth={3} />}
-                                  {choiceState === "wrong" && <span className="text-[10px] font-black">X</span>}
-                                </div>
-                                <span className={`text-[15px] font-medium leading-tight ${choiceState === 'normal' ? 'text-slate-700' : 'text-slate-900 font-bold'}`}>{c.text}</span>
-                              </label>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className="prose prose-slate prose-lg max-w-none">
-                <p className="text-lg text-slate-600 leading-loose whitespace-pre-wrap font-medium">
-                  {lesson.content || 'เนื้อหาเพิ่มเติมสำหรับบทเรียนนี้...'}
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-4 flex flex-col gap-8">
-            {/* Resources Column */}
-            {lesson.resources && lesson.resources.length > 0 && (
-              <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-8">
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Downloadables
-                </h4>
-                <div className="flex flex-col gap-3">
-                  {lesson.resources.map((res, i) => (
-                    <a
-                      key={i}
-                      href={res.url || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl hover:border-primary hover:shadow-lg transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
-                          <FileText size={20} strokeWidth={2.5}/>
-                        </div>
-                        <div>
-                          <p className="text-sm font-black text-slate-800 line-clamp-1">{res.title}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase">{res.size || 'External Link'}</p>
-                        </div>
-                      </div>
-                      <ChevronRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Achievement Card - "Expensive Looking" */}
+            
             {completed && (
-              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 text-center shadow-2xl shadow-emerald-500/5 relative overflow-hidden animate-celebrate animate-fade-in">
-                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/5 rounded-full blur-3xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 bg-emerald-500 text-white rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-[0_10px_25px_rgba(16,185,129,0.3)] transform rotate-3">
-                    <CheckCircle size={32} strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-2">บทเรียนสำเร็จแล้ว!</h3>
-                  <p className="text-slate-400 text-sm font-medium leading-relaxed mb-6">คุณได้รับความรู้และความเข้าใจที่ยอดเยี่ยมในหัวข้อนี้</p>
-                  
-                  {nextLessonId && (
-                    <button
-                      onClick={() => navigate(`/user/course/${courseId}/lesson/${nextLessonId}`)}
-                      className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
-                    >
-                      เรียนบทถัดไป →
-                    </button>
-                  )}
+              <div className="flex items-center gap-3 bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 shadow-sm animate-fade-in shrink-0 self-start md:self-auto">
+                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                  <CheckCircle size={14} strokeWidth={3} />
                 </div>
+                <span className="text-sm font-black text-emerald-700 uppercase tracking-wider">Completed</span>
               </div>
             )}
+          </div>
+
+          <div className="h-px w-full bg-slate-50 mb-12"></div>
+
+          {/* Main Content Area Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-8">
+              {lesson.type === 'quiz' ? (
+                <div className="flex flex-col gap-8">
+                  {!quizResult && (
+                    <div className="bg-slate-950 p-7 rounded-3xl border border-slate-800 flex items-start gap-5 shadow-2xl relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="w-10 h-10 bg-primary/20 text-primary rounded-xl flex items-center justify-center shrink-0 font-black border border-primary/20 relative z-10">i</div>
+                      <div className="relative z-10">
+                        <p className="font-bold text-white mb-1">Knowledge Verification</p>
+                        <p className="text-sm text-slate-400 leading-relaxed font-medium">คุณต้องได้คะแนนอย่างน้อย {lesson.passScore || 60}% ({Math.ceil((lesson.passScore || 60)/100 * (lesson.questions?.length || 0))} ข้อ) จากทั้งหมด {lesson.questions?.length || 0} ข้อ เพื่อผ่านบทเรียนนี้</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {quizResult && (
+                    <div className={`p-12 rounded-[3rem] border-2 transition-all duration-500 animate-celebrate shadow-2xl flex flex-col items-center gap-5 text-center ${
+                      quizResult.passed ? 'bg-white border-emerald-100' : 'bg-red-50/30 border-red-100'
+                    }`}>
+                       <div className={`w-24 h-24 rounded-[2rem] flex items-center justify-center text-white shadow-2xl mb-2 ${quizResult.passed ? 'bg-emerald-500 shadow-emerald-200' : 'bg-red-500 shadow-red-200'}`}>
+                          {quizResult.passed ? <CheckCircle size={48} strokeWidth={2}/> : <div className="text-4xl font-black">!</div>}
+                       </div>
+                       <div>
+                         <h3 className={`text-3xl font-black tracking-tighter mb-1 ${quizResult.passed ? 'text-emerald-600' : 'text-red-700'}`}>
+                           {quizResult.passed ? 'Excellent Work!' : 'Almost There'}
+                         </h3>
+                         <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your performance results</p>
+                       </div>
+                       <div className="bg-slate-50 px-8 py-3 rounded-2xl border border-slate-100">
+                          <p className="text-5xl font-black text-slate-900 tracking-tighter">{quizResult.scorePercent}%</p>
+                       </div>
+                       
+                       <button onClick={() => { setQuizResult(null); setAnswers({}); }} className="mt-4 px-10 py-3.5 rounded-2xl font-black transition-all border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 text-slate-600 text-sm tracking-widest uppercase">
+                         {quizResult.passed ? 'Review Questions' : 'Retake Quiz'}
+                       </button>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-6">
+                    {lesson.questions?.map((q, idx) => {
+                      const isSubmitted = !!quizResult;
+                      const userA = answers[q.id];
+                      const correctA = quizResult?.correctAnswers?.[q.id];
+                      const isCorrect = userA === correctA;
+                      const isWrong = userA && userA !== correctA;
+                      
+                      return (
+                        <div key={q.id} className={`bg-white border-[1.5px] rounded-[2.5rem] p-8 md:p-10 transition-all ${isSubmitted && isWrong ? 'border-red-100 bg-red-50/5' : isSubmitted && isCorrect ? 'border-emerald-100 bg-emerald-50/5' : 'border-slate-100 hover:border-slate-200'}`}>
+                          <div className="flex justify-between items-start mb-10">
+                            <h4 className="text-xl font-bold text-slate-900 leading-relaxed flex gap-5">
+                              <span className="shrink-0 w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-sm font-black shadow-lg shadow-slate-200">{idx + 1}</span>
+                              {q.text}
+                            </h4>
+                          </div>
+                          <div className="flex flex-col gap-3.5">
+                            {q.choices.map(c => {
+                              let choiceState = "normal";
+                              if (isSubmitted) {
+                                if (c.id === correctA) choiceState = "correct";
+                                else if (c.id === userA) choiceState = "wrong";
+                                else choiceState = "untouched";
+                              } else if (userA === c.id) {
+                                choiceState = "selected";
+                              }
+
+                              return (
+                                <label
+                                  key={c.id}
+                                  onClick={() => !isSubmitted && setAnswers({ ...answers, [q.id]: c.id })}
+                                  className={`flex items-center gap-5 p-5 md:p-6 rounded-2xl border-2 transition-all cursor-pointer ${
+                                    choiceState === "selected" ? "border-primary bg-primary/5 shadow-[0_10px_30px_rgba(79,70,229,0.1)]" :
+                                    choiceState === "correct" ? "border-emerald-500 bg-emerald-50 text-emerald-900" :
+                                    choiceState === "wrong" ? "border-red-400 bg-red-50 text-red-900 opacity-90" :
+                                    choiceState === "untouched" ? "border-slate-50 bg-slate-50/50 opacity-40 grayscale" :
+                                    "border-slate-50 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-200"
+                                  } hover:translate-x-1 active:scale-[0.98] group/choice`}
+                                >
+                                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                                    choiceState === "selected" ? "border-primary bg-primary text-white" :
+                                    choiceState === "correct" ? "border-emerald-500 bg-emerald-500 text-white" :
+                                    choiceState === "wrong" ? "border-red-400 bg-red-400 text-white" :
+                                    "border-slate-300 bg-white group-hover/choice:border-slate-400"
+                                  }`}>
+                                    {choiceState === "selected" && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                    {choiceState === "correct" && <CheckCircle size={14} strokeWidth={3} />}
+                                    {choiceState === "wrong" && <span className="text-[10px] font-black">X</span>}
+                                  </div>
+                                  <span className={`text-[15px] font-medium leading-tight ${choiceState === 'normal' ? 'text-slate-600' : 'text-slate-900 font-black'}`}>{c.text}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="prose prose-slate prose-lg max-w-none">
+                  <p className="text-xl text-slate-600 leading-[1.8] whitespace-pre-wrap font-medium">
+                    {lesson.content || 'เนื้อหาเพิ่มเติมสำหรับบทเรียนนี้...'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col gap-8">
+              {/* Achievement Card - "Exclusive Looking" */}
+              {completed && (
+                <div className="bg-white border border-slate-100 rounded-[3rem] p-12 text-center shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] relative overflow-hidden animate-celebrate">
+                  <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/5 rounded-full blur-[80px]"></div>
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-20 h-20 bg-emerald-500 text-white rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-emerald-200 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                      <CheckCircle size={40} strokeWidth={2} />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">ทำสำเร็จแล้ว!</h3>
+                    <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10 px-2">คุณผ่านบทเรียนนี้อย่างยอดเยี่ยม พร้อมสำหรับความท้าทายถัดไปหรือยัง?</p>
+                    
+                    {nextLessonId ? (
+                      <button
+                        onClick={() => navigate(`/user/course/${courseId}/lesson/${nextLessonId}`)}
+                        className="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-sm tracking-[0.2em] uppercase hover:bg-primary transition-all shadow-2xl shadow-slate-200 active:scale-95"
+                      >
+                        เรียนบทถัดไป →
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => navigate(`/user/course/${courseId}`)}
+                        className="w-full py-5 bg-slate-100 text-slate-900 rounded-[1.5rem] font-black text-sm tracking-[0.2em] uppercase hover:bg-slate-200 transition-all active:scale-95"
+                      >
+                        กลับสู่คอร์สเรียน
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Resources Column */}
+              {lesson.resources && lesson.resources.length > 0 && (
+                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-8">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 flex items-center gap-2.5">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div> Supplementary
+                  </h4>
+                  <div className="flex flex-col gap-3.5">
+                    {lesson.resources.map((res, i) => (
+                      <a
+                        key={i}
+                        href={res.url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl hover:border-primary hover:shadow-2xl hover:translate-y-[-2px] transition-all group"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                            <FileText size={20} strokeWidth={2.5}/>
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-slate-800 line-clamp-1">{res.title}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{res.size || 'External Link'}</p>
+                          </div>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
