@@ -31,10 +31,10 @@ const UserLayout = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-gray-50">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-transparent">
       
       {/* Desktop Sidebar (Hidden on mobile) */}
-      <aside className="hidden md:flex w-64 flex-col bg-white border-r border-gray-200 h-full z-20">
+      <aside className="hidden md:flex w-[280px] flex-col bg-white rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] ring-1 ring-gray-100/80 my-5 ml-5 h-[calc(100vh-2.5rem)] z-20 overflow-hidden shrink-0">
         <div className="p-6 flex items-center gap-3 border-b border-gray-100 shrink-0">
           <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-sm">
             <BookMarked size={20} strokeWidth={2.5}/>
@@ -108,7 +108,7 @@ const UserLayout = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="user-main flex-1 no-scrollbar md:!max-w-none md:!p-8 md:!pb-8 bg-gray-50">
+        <main className="user-main flex-1 no-scrollbar md:!max-w-[1400px] md:mx-auto md:!px-12 md:!pt-12 md:!pb-12 bg-transparent w-full">
           <Outlet />
         </main>
 

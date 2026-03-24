@@ -18,12 +18,34 @@
 @layer base {
   html, body {
     -webkit-font-smoothing: antialiased;
-    background-color: var(--color-background);
-    color: #111827;
+    background-color: #F8FAFC; /* slate-50 */
+    color: #0F172A; /* slate-900 */
     font-family: var(--font-sans);
     overflow-x: hidden;
     max-width: 100vw;
   }
+}
+
+/* Premium Typography Patterns */
+.text-hero {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.text-title {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.mesh-bg {
+  background-color: #F1F5F9;
+  background-image: radial-gradient(at 88% 12%, hsla(234, 100%, 75%, 0.25) 0px, transparent 50%),
+                    radial-gradient(at 19% 82%, hsla(199, 100%, 72%, 0.2) 0px, transparent 50%),
+                    radial-gradient(at 15% 15%, hsla(285, 100%, 75%, 0.2) 0px, transparent 50%);
 }
 
 @layer components {

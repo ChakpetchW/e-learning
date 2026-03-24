@@ -1,6 +1,6 @@
 {
   "name": "elearning-api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "API Backend for e-Learning WebApp MVP",
   "main": "src/server.js",
   "scripts": {
