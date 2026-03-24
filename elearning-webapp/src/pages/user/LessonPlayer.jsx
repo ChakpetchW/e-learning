@@ -95,261 +95,307 @@ const LessonPlayer = () => {
     );
   }
 
-  return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden animate-fade-in relative mb-10 mt-2">
+  const nextLessonId = course?.lessons?.find((l, idx, arr) => {
+    const currentIdx = arr.findIndex(item => item.id === lessonId);
+    return idx === currentIdx + 1;
+  })?.id;
 
-      <div className={`relative w-full ${lesson.type === 'quiz' ? 'bg-slate-900' : 'aspect-video bg-black'} flex items-center justify-center overflow-hidden`}>
-        {/* Back Button Overlay */}
-        <div className="absolute top-4 left-4 z-40">
+  if (loading || !lesson) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-primary border-r-2 border-r-transparent"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col w-full max-w-5xl mx-auto md:px-4 md:py-6 relative min-h-screen pb-24 md:pb-12">
+      
+      {/* Immersive Header / Media Section */}
+      <div className="relative w-full bg-slate-900 md:rounded-[2.5rem] overflow-hidden shadow-2xl z-20 group">
+        {/* Back Button Overlay - Floating Glass */}
+        <div className="absolute top-4 left-4 md:top-6 md:left-6 z-50">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors"
+            className="w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95 shadow-xl"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={22} strokeWidth={2.5} />
           </button>
         </div>
 
         {/* Media Content */}
-        {lesson.type === 'video' ? (
-          <VideoPlayer
-            key={lesson.contentUrl}
-            url={lesson.contentUrl?.trim() || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'}
-            onEnded={handleComplete}
-          />
-        ) : lesson.type === 'quiz' ? (
-          <div className="flex flex-col items-center gap-6 text-gray-200 px-6 py-16 md:py-20 text-center z-10 w-full relative">
-            {/* Premium Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-black z-0"></div>
-            {/* Decorative background blobs */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] transform translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] transform -translate-x-1/2 translate-y-1/2 z-0 pointer-events-none"></div>
-            
-            <div className="relative z-10 w-24 h-24 bg-gradient-to-tr from-primary via-indigo-500 to-blue-500 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-primary/30 transform -rotate-3 hover:rotate-0 transition-transform duration-500 mt-6">
-               <FileText size={44} strokeWidth={1.5} />
+        <div className={`${lesson.type === 'quiz' ? '' : 'aspect-video'} w-full`}>
+          {lesson.type === 'video' ? (
+            <VideoPlayer
+              key={lesson.contentUrl}
+              url={lesson.contentUrl?.trim() || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'}
+              onEnded={handleComplete}
+            />
+          ) : lesson.type === 'quiz' ? (
+            <div className="flex flex-col items-center gap-6 text-white px-6 py-20 md:py-32 text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-black z-0"></div>
+              {/* Decorative mesh elements */}
+              <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+              
+              <div className="relative z-10 w-24 h-24 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] flex items-center justify-center text-primary shadow-2xl transform transition-transform duration-700 hover:rotate-3">
+                 <FileText size={48} strokeWidth={1} />
+              </div>
+              <div className="relative z-10 max-w-lg">
+                 <h2 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tighter">Knowledge Check</h2>
+                 <p className="text-slate-400 text-lg font-medium leading-relaxed">ทดสอบความเข้าใจของคุณเกี่ยวกับบทเรียนนี้ เพื่อปลดล็อกเนื้อหาถัดไป</p>
+              </div>
             </div>
-            <div className="relative z-10 max-w-md pb-8">
-               <h2 className="text-3xl md:text-4xl font-black text-white mb-3 tracking-tight drop-shadow-sm">แบบทดสอบประจำบท</h2>
-               <p className="text-[14px] text-indigo-100/70 font-medium leading-relaxed">ประเมินความรู้และความเข้าใจของคุณ เพื่อปลดล็อกบทเรียนถัดไปและรับคะแนนสะสม</p>
+          ) : (
+            <div className="flex flex-col items-center gap-8 py-20 md:py-32 text-center bg-slate-950 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+              <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center text-primary backdrop-blur-xl shadow-2xl relative z-10">
+                <BookOpen size={40} strokeWidth={1.5} />
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-black uppercase tracking-[0.3em] text-primary mb-4">Documentary Lesson</p>
+                <button
+                  onClick={() => window.open(getFullUrl(lesson.contentUrl), '_blank')}
+                  className="btn btn-primary px-10 py-4 text-base rounded-2xl shadow-[0_20px_40px_rgba(79,70,229,0.3)] hover:scale-105"
+                >
+                  เปิดอ่านเอกสารบทเรียน
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-5 p-8 text-center z-10 w-full bg-slate-900">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-primary backdrop-blur-sm shadow-xl">
-              <FileText size={32} />
-            </div>
-            <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-2">บทเรียนรูปแบบเอกสาร</p>
-              <button
-                onClick={() => window.open(getFullUrl(lesson.contentUrl), '_blank')}
-                className="mt-4 bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 mx-auto shadow-lg shadow-primary/30"
-              >
-                <BookOpen size={18} /> เปิดอ่านเอกสาร
-              </button>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      <div className="bg-white p-6 md:p-8 rounded-[2rem] -mt-6 relative z-20 flex flex-col min-h-[300px] border-t border-slate-100 shadow-[0_-8px_20px_rgba(0,0,0,0.03)]">
-        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
-
-        <div className="flex justify-between items-start mb-4">
-          <h1 className="text-xl md:text-2xl font-black text-slate-900 leading-tight pr-4">{lesson.title}</h1>
+      {/* Content Section - Professional & Clear */}
+      <div className="bg-white md:bg-transparent px-6 py-10 md:px-0 md:py-12 relative z-10">
+        
+        {/* Lesson Metadata */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
+                {lesson.type === 'video' ? <Play size={12} fill="currentColor"/> : <FileText size={12}/>} {lesson.type || 'Video'}
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200/50">
+                <Clock size={12}/> {lesson.duration || '10'}m
+              </span>
+            </div>
+            <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight uppercase">{lesson.title}</h1>
+          </div>
+          
           {completed && (
-            <span className="bg-emerald-50 text-emerald-600 text-[10px] md:text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg block shrink-0 border border-emerald-200 shadow-sm">
-              Completed
-            </span>
+            <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-2xl border border-emerald-100 shadow-sm animate-fade-in shrink-0">
+              <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                <CheckCircle size={14} strokeWidth={3} />
+              </div>
+              <span className="text-sm font-bold text-emerald-700">Completed</span>
+            </div>
           )}
         </div>
 
-        <div className="flex gap-2 mb-8">
-          <span className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-            {lesson.type === 'video' ? <Play size={14} className="text-primary"/> : <FileText size={14} className="text-primary"/>} {lesson.type || 'Video'}
-          </span>
-          <span className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <Clock size={14} className="text-slate-400"/> {lesson.duration || '10'}m
-          </span>
-        </div>
+        <div className="h-px w-full bg-slate-100 mb-12"></div>
 
-        {lesson.type === 'quiz' ? (
-          <div className="flex flex-col gap-6 mb-8 mt-2">
-            {!quizResult && (
-              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex items-start gap-4">
-                <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold shadow-md shadow-blue-500/20">i</div>
-                <div>
-                  <p className="font-bold text-blue-900 mb-1 text-sm">การทดสอบท้ายบทเรียน</p>
-                  <p className="text-[13px] text-blue-700/80 font-medium">คุณต้องสอบผ่าน {lesson.passScore || 60}% ขึ้นไปจากข้อสอบทั้งหมด {lesson.questions?.length || 0} ข้อ เพื่อผ่านบทเรียนนี้ ถ้าไม่ผ่านสามารถทำใหม่ได้</p>
+        {/* Main Content Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-8">
+            {lesson.type === 'quiz' ? (
+              <div className="flex flex-col gap-8">
+                {!quizResult && (
+                  <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 flex items-start gap-5 shadow-2xl">
+                    <div className="w-10 h-10 bg-primary/20 text-primary rounded-full flex items-center justify-center shrink-0 font-black border border-primary/20">i</div>
+                    <div>
+                      <p className="font-bold text-white mb-1">เกณฑ์การผ่านบทเรียน</p>
+                      <p className="text-sm text-slate-400 leading-relaxed">คุณต้องได้คะแนนอย่างน้อย {lesson.passScore || 60}% ({Math.ceil((lesson.passScore || 60)/100 * (lesson.questions?.length || 0))} ข้อ) จากทั้งหมด {lesson.questions?.length || 0} ข้อ</p>
+                    </div>
+                  </div>
+                )}
+
+                {quizResult && (
+                  <div className={`p-10 rounded-[2.5rem] border transition-all duration-500 animate-celebrate shadow-2xl flex flex-col items-center gap-4 text-center ${
+                    quizResult.passed ? 'bg-white border-emerald-100' : 'bg-red-50/50 border-red-100'
+                  }`}>
+                     <div className={`w-20 h-20 rounded-full flex items-center justify-center text-white shadow-xl mb-2 ${quizResult.passed ? 'bg-emerald-500 shadow-emerald-200' : 'bg-red-500 shadow-red-200'}`}>
+                        {quizResult.passed ? <CheckCircle size={40} strokeWidth={2.5}/> : <div className="text-3xl font-black">!</div>}
+                     </div>
+                     <h3 className={`text-3xl font-black tracking-tighter ${quizResult.passed ? 'text-emerald-600' : 'text-red-600'}`}>
+                       {quizResult.passed ? 'Excellent Job!' : 'Keep Practicing'}
+                     </h3>
+                     <div className="flex flex-col">
+                        <p className="text-5xl font-black text-slate-900">{quizResult.scorePercent}%</p>
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-1">Your Score</p>
+                     </div>
+                     
+                     <button onClick={() => { setQuizResult(null); setAnswers({}); }} className="mt-4 px-8 py-3 rounded-xl font-bold transition-all border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm">
+                       {quizResult.passed ? 'Retry to Review' : 'Try Again'}
+                     </button>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-6">
+                  {lesson.questions?.map((q, idx) => {
+                    const isSubmitted = !!quizResult;
+                    const userA = answers[q.id];
+                    const correctA = quizResult?.correctAnswers?.[q.id];
+                    const isCorrect = userA === correctA;
+                    const isWrong = userA && userA !== correctA;
+                    
+                    return (
+                      <div key={q.id} className={`bg-white border-2 rounded-[2rem] p-8 transition-all ${isSubmitted && isWrong ? 'border-red-100 bg-red-50/10' : isSubmitted && isCorrect ? 'border-emerald-100 bg-emerald-50/10' : 'border-slate-100 shadow-sm'}`}>
+                        <div className="flex justify-between items-start mb-8">
+                          <h4 className="text-lg font-bold text-slate-900 leading-relaxed flex gap-4">
+                            <span className="shrink-0 w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm font-black">{idx + 1}</span>
+                            {q.text}
+                          </h4>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          {q.choices.map(c => {
+                            let choiceState = "normal";
+                            if (isSubmitted) {
+                              if (c.id === correctA) choiceState = "correct";
+                              else if (c.id === userA) choiceState = "wrong";
+                              else choiceState = "untouched";
+                            } else if (userA === c.id) {
+                              choiceState = "selected";
+                            }
+
+                            return (
+                              <label
+                                key={c.id}
+                                onClick={() => !isSubmitted && setAnswers({ ...answers, [q.id]: c.id })}
+                                className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                                  choiceState === "selected" ? "border-primary bg-primary/5 ring-4 ring-primary/5" :
+                                  choiceState === "correct" ? "border-emerald-500 bg-emerald-50" :
+                                  choiceState === "wrong" ? "border-red-400 bg-red-50 opacity-80" :
+                                  choiceState === "untouched" ? "border-slate-50 bg-slate-50 opacity-40 grayscale" :
+                                  "border-slate-100 hover:border-slate-300"
+                                } hover:scale-[1.01] active:scale-[0.99]`}
+                              >
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                                  choiceState === "selected" ? "border-primary bg-primary text-white" :
+                                  choiceState === "correct" ? "border-emerald-500 bg-emerald-500 text-white" :
+                                  choiceState === "wrong" ? "border-red-400 bg-red-400 text-white" :
+                                  "border-slate-300 bg-white"
+                                }`}>
+                                  {choiceState === "selected" && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                  {choiceState === "correct" && <CheckCircle size={14} strokeWidth={3} />}
+                                  {choiceState === "wrong" && <span className="text-[10px] font-black">X</span>}
+                                </div>
+                                <span className={`text-[15px] font-medium leading-tight ${choiceState === 'normal' ? 'text-slate-700' : 'text-slate-900 font-bold'}`}>{c.text}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="prose prose-slate prose-lg max-w-none">
+                <p className="text-lg text-slate-600 leading-loose whitespace-pre-wrap font-medium">
+                  {lesson.content || 'เนื้อหาเพิ่มเติมสำหรับบทเรียนนี้...'}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="lg:col-span-4 flex flex-col gap-8">
+            {/* Resources Column */}
+            {lesson.resources && lesson.resources.length > 0 && (
+              <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-8">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Downloadables
+                </h4>
+                <div className="flex flex-col gap-3">
+                  {lesson.resources.map((res, i) => (
+                    <a
+                      key={i}
+                      href={res.url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl hover:border-primary hover:shadow-lg transition-all group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                          <FileText size={20} strokeWidth={2.5}/>
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-slate-800 line-clamp-1">{res.title}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase">{res.size || 'External Link'}</p>
+                        </div>
+                      </div>
+                      <ChevronRight size={16} className="text-slate-300 group-hover:text-primary transition-colors" />
+                    </a>
+                  ))}
                 </div>
               </div>
             )}
 
-            {quizResult && (
-              <div className={`p-6 rounded-2xl border-2 flex flex-col items-center gap-3 text-center animate-fade-in ${
-                quizResult.passed ? 'bg-success/5 border-success/20' : 'bg-red-50 border-red-200/60'
-              }`}>
-                 <h3 className={`font-black text-2xl tracking-tight ${quizResult.passed ? 'text-success' : 'text-red-500'}`}>
-                   {quizResult.passed ? 'คุณสอบผ่าน! 🎉' : 'คุณสอบไม่ผ่าน 😢'}
-                 </h3>
-                 <p className="font-bold text-gray-800 text-3xl my-1">{quizResult.scorePercent}%</p>
-                 <p className="text-sm text-gray-500 font-medium bg-white px-3 py-1 rounded-md border border-gray-100 shadow-sm">เกณฑ์การผ่านคือ {quizResult.passScore || lesson.passScore || 60}%</p>
-                 
-                 <button onClick={() => { setQuizResult(null); setAnswers({}); }} className={`mt-4 px-6 py-2.5 rounded-xl font-bold shadow-sm text-sm transition-colors border ${
-                   quizResult.passed ? 'bg-white text-primary border-primary/20 hover:bg-primary/5' : 'bg-white text-red-500 border-red-200 hover:bg-red-50'
-                 }`}>
-                   {quizResult.passed ? 'ทำแบบทดสอบอีกครั้งเพื่อดูข้อที่ถูก' : 'ลองทำใหม่อีกครั้ง'}
-                 </button>
+            {/* Achievement Card - "Expensive Looking" */}
+            {completed && (
+              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 text-center shadow-2xl shadow-emerald-500/5 relative overflow-hidden animate-celebrate animate-fade-in">
+                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/5 rounded-full blur-3xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 bg-emerald-500 text-white rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-[0_10px_25px_rgba(16,185,129,0.3)] transform rotate-3">
+                    <CheckCircle size={32} strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 mb-2">บทเรียนสำเร็จแล้ว!</h3>
+                  <p className="text-slate-400 text-sm font-medium leading-relaxed mb-6">คุณได้รับความรู้และความเข้าใจที่ยอดเยี่ยมในหัวข้อนี้</p>
+                  
+                  {nextLessonId && (
+                    <button
+                      onClick={() => navigate(`/user/course/${courseId}/lesson/${nextLessonId}`)}
+                      className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                    >
+                      เรียนบทถัดไป →
+                    </button>
+                  )}
+                </div>
               </div>
             )}
-
-            {lesson.questions?.map((q, idx) => {
-               const isSubmitted = !!quizResult;
-               const userA = answers[q.id];
-               const correctA = quizResult?.correctAnswers?.[q.id];
-               const isCorrect = userA === correctA;
-               const isWrong = userA && userA !== correctA;
-               
-               return (
-               <div key={q.id} className={`bg-white border rounded-2xl p-5 shadow-sm overflow-hidden ${isSubmitted && isWrong ? 'border-red-200' : isSubmitted && isCorrect ? 'border-green-200' : 'border-gray-200'}`}>
-                 <div className="flex justify-between items-start mb-5">
-                   <p className="font-bold text-gray-900 leading-relaxed text-[15px]"><span className={`mr-2 px-2 py-0.5 rounded text-sm ${isSubmitted && isCorrect ? 'bg-green-100 text-green-700' : isSubmitted && isWrong ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>{idx+1}</span>{q.text}</p>
-                   {isSubmitted && (
-                      <span className={`text-xs font-bold px-2 py-1 rounded-md ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {isCorrect ? '+'+q.points : '0'} / {q.points} Pts
-                      </span>
-                   )}
-                 </div>
-                 <div className="flex flex-col gap-2.5">
-                   {q.choices.map(c => {
-                      let choiceClass = "bg-gray-50 border-transparent text-gray-700";
-                      let radioClass = "border-gray-300 bg-white";
-                      let showCheck = false;
-                      
-                      if (!isSubmitted) {
-                         if (answers[q.id] === c.id) {
-                            choiceClass = "bg-primary/5 border-primary text-primary font-bold shadow-sm shadow-primary/5";
-                            radioClass = "border-primary";
-                            showCheck = true;
-                         } else {
-                            choiceClass += " hover:border-gray-300 hover:bg-gray-100";
-                         }
-                      } else {
-                         if (c.id === correctA) {
-                            choiceClass = "bg-green-50 border-green-500 text-green-800 font-bold shadow-sm";
-                            radioClass = "border-green-500 bg-green-500 text-white flex items-center justify-center";
-                         } else if (c.id === userA && c.id !== correctA) {
-                            choiceClass = "bg-red-50 border-red-400 text-red-800 font-bold opacity-80";
-                            radioClass = "border-red-400 bg-red-400 text-white flex items-center justify-center";
-                         } else {
-                            choiceClass = "bg-gray-50 border-transparent text-gray-400 opacity-60";
-                            radioClass = "border-gray-200 bg-gray-100";
-                         }
-                      }
-
-                      return (
-                      <label key={c.id} onClick={() => !isSubmitted && setAnswers({ ...answers, [q.id]: c.id })} className={`flex items-center gap-3.5 p-3.5 rounded-xl border transition-all ${!isSubmitted ? 'cursor-pointer' : 'cursor-default'} ${choiceClass}`}>
-                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${radioClass}`}>
-                            {!isSubmitted && showCheck && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
-                            {isSubmitted && c.id === correctA && <CheckCircle size={14} className="text-white" strokeWidth={3} />}
-                            {isSubmitted && c.id === userA && c.id !== correctA && <span className="text-white font-bold text-[10px]">X</span>}
-                         </div>
-                         <span className="text-[14px] leading-tight select-none">{c.text}</span>
-                      </label>
-                      );
-                   })}
-                 </div>
-               </div>
-               );
-            })}
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Action Bar (Mobile Only) */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-slate-100 z-50 md:hidden flex gap-3 animate-fade-in shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        {completed && nextLessonId ? (
+          <button
+            onClick={() => navigate(`/user/course/${courseId}/lesson/${nextLessonId}`)}
+            className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-[13px] tracking-widest uppercase shadow-xl"
+          >
+            เริ่มบทถัดไป
+          </button>
+        ) : lesson.type === 'quiz' && !quizResult ? (
+          <button
+            onClick={handleQuizSubmit}
+            disabled={updating || Object.keys(answers).length < (lesson.questions?.length || 0)}
+            className="flex-1 py-4 bg-primary text-white rounded-2xl font-black text-[13px] tracking-widest uppercase shadow-xl shadow-primary/20 disabled:opacity-50"
+          >
+            {updating ? 'กำลังตรวจ...' : 'ส่งคำตอบ'}
+          </button>
+        ) : !completed && lesson.type !== 'quiz' ? (
+          <button
+            onClick={handleComplete}
+            disabled={updating}
+            className="flex-1 py-4 bg-primary text-white rounded-2xl font-black text-[13px] tracking-widest uppercase shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+          >
+            <CheckCircle size={18} strokeWidth={2.5} /> {updating ? 'กำลังบันทึก...' : 'เรียนจบแล้ว'}
+          </button>
+        ) : quizResult && !quizResult?.passed ? (
+          <button
+            onClick={() => { setQuizResult(null); setAnswers({}); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-black text-[13px] tracking-widest uppercase shadow-xl"
+          >
+            ลองทำใหม่อีกครั้ง
+          </button>
         ) : (
-          <div className="prose prose-sm prose-gray max-w-none mb-8">
-            <p className="text-[15px] text-gray-600 font-medium leading-relaxed whitespace-pre-wrap">
-              {lesson.content || 'เนื้อหาเพิ่มเติมสำหรับบทเรียนนี้...'}
-            </p>
-          </div>
+          <button
+            onClick={() => navigate(-1)}
+            className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-[13px] tracking-widest uppercase"
+          >
+            ย้อนกลับ
+          </button>
         )}
-
-        {/* Resources section */}
-        {lesson.type !== 'quiz' && (
-          <div className="mt-2 mb-8">
-            {lesson.resources && lesson.resources.length > 0 && <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">เอกสารประกอบ</h4>}
-            {lesson.resources && lesson.resources.length > 0 ? lesson.resources.map((res, i) => (
-              <a
-                key={i}
-                href={res.url || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 border border-gray-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group mb-2"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-red-50 text-red-500 rounded-lg group-hover:bg-red-100 transition-colors">
-                    <FileText size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-900">{res.title}</p>
-                    <p className="text-[11px] font-bold text-gray-400">{res.size || 'External Link'}</p>
-                  </div>
-                </div>
-                <span className="text-xs font-bold text-primary group-hover:underline flex items-center gap-1">
-                  เปิดลิงก์ <ChevronRight size={14} />
-                </span>
-              </a>
-            )) : null}
-          </div>
-        )}
-
-        <div className="mt-auto pt-4">
-          {lesson.type === 'quiz' && !quizResult ? (
-            <button
-              onClick={handleQuizSubmit}
-              disabled={updating || Object.keys(answers).length < (lesson.questions?.length || 0)}
-              className="btn bg-primary text-white hover:bg-primary-hover w-full py-4 text-[15px] rounded-xl shadow-lg border border-primary transition-all flex items-center justify-center gap-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-               {updating ? 'กำลังตรวจคำตอบ...' : 'ส่งคำตอบ'}
-            </button>
-          ) : lesson.type === 'quiz' && (completed || quizResult?.passed) ? (
-            <div className="flex flex-col gap-3">
-               <div className="bg-success/10 border border-success/20 text-success p-5 rounded-2xl text-center animate-fade-in flex flex-col items-center gap-3 shadow-inner">
-                <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center shadow-lg shadow-success/30 transform scale-up-center">
-                  <CheckCircle size={32} strokeWidth={2.5} />
-                </div>
-                <div>
-                  <h3 className="font-black text-xl text-gray-900">คุณเรียนจบบทนี้แล้ว!</h3>
-                </div>
-              </div>
-              <button
-                onClick={() => { setQuizResult(null); setAnswers({}); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="btn bg-white text-primary hover:bg-primary/5 w-full py-4 text-[15px] rounded-xl shadow-md border-2 border-primary/20 transition-all flex items-center justify-center font-bold"
-              >
-                ทำแบบทดสอบอีกครั้งเพื่อทบทวน
-              </button>
-            </div>
-          ) : !completed && lesson.type !== 'quiz' ? (
-            <button
-              onClick={handleComplete}
-              disabled={updating}
-              className="btn bg-primary text-white hover:bg-primary-hover w-full py-4 text-[15px] rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 font-bold disabled:opacity-75"
-            >
-              <CheckCircle size={20} /> {updating ? 'กำลังบันทึก...' : 'เรียนจบแล้ว (ทำเครื่องหมายว่าจบ)'}
-            </button>
-          ) : completed && lesson.type !== 'quiz' ? (
-            <div className="bg-success/10 border border-success/20 text-success p-5 rounded-2xl text-center animate-fade-in flex flex-col items-center gap-3 shadow-inner">
-              <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center shadow-lg shadow-success/30 transform scale-up-center">
-                <CheckCircle size={32} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h3 className="font-black text-xl text-gray-900">คุณเรียนจบบทนี้แล้ว!</h3>
-              </div>
-            </div>
-          ) : quizResult && !quizResult?.passed ? (
-            <button
-              onClick={() => { setQuizResult(null); setAnswers({}); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="btn bg-white text-red-500 hover:bg-red-50 w-full py-4 text-[15px] rounded-xl shadow-lg border-2 border-red-200 transition-all flex items-center justify-center font-bold"
-            >
-              ลองทำใหม่อีกครั้ง
-            </button>
-          ) : null}
-        </div>
       </div>
     </div>
   );

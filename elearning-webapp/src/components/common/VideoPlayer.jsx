@@ -50,31 +50,37 @@ const VideoPlayer = ({ url, onEnded }) => {
   if (!hasStarted) {
     return (
       <div
-        className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl cursor-pointer group"
+        className="relative w-full aspect-video bg-slate-900 rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.2)] cursor-pointer group"
         onClick={() => setHasStarted(true)}
         onContextMenu={handleContextMenu}
       >
-        {/* Thumbnail */}
+        {/* Thumbnail with subtle zoom on hover */}
         <img
           src={thumbnailUrl}
           alt="Video thumbnail"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={(e) => { e.target.style.display = 'none'; }}
         />
 
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
+        {/* Graduated dark overlay for cinematic depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:bg-black/10 transition-colors duration-500"></div>
 
-        {/* Play Button */}
+        {/* Premium Play Button - Glassmorphism Style */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-20 h-20 bg-primary/95 text-white rounded-full flex items-center justify-center pl-1.5 shadow-[0_0_50px_rgba(var(--primary-rgb),0.5)] transform group-hover:scale-110 transition-all duration-300">
-            <Play size={40} fill="currentColor" />
+          <div className="relative">
+            {/* Outer Pulse Ring */}
+            <div className="absolute inset-0 bg-white/20 rounded-full animate-ping scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+            
+            {/* Main Button Container */}
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-xl border border-white/30 text-white rounded-full flex items-center justify-center pl-1 shadow-[0_0_40px_rgba(255,255,255,0.2)] transform group-hover:scale-110 group-hover:bg-white/30 transition-all duration-500">
+              <Play size={44} fill="currentColor" className="drop-shadow-lg" />
+            </div>
           </div>
         </div>
 
-        {/* Label */}
-        <div className="absolute bottom-4 left-4 bg-black/60 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm uppercase tracking-widest">
-          คลิกเพื่อเล่น
+        {/* Subtle Label - Elegant & Professional */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 glass px-5 py-2 rounded-full text-[11px] font-bold text-white uppercase tracking-[0.2em] opacity-80 group-hover:opacity-100 transition-all border border-white/20 shadow-xl">
+          Start Learning
         </div>
       </div>
     );
