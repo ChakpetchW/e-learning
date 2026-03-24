@@ -86,7 +86,7 @@ const Home = () => {
               </span>
             )}
         </div>
-        <h3 className="text-[1.05rem] font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
+        <h3 className="text-[1.05rem] font-bold text-slate-900 leading-snug line-clamp-2 min-h-[44px] mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
         
         <div className="flex items-center gap-3 mt-auto mb-4">
            <div className="flex items-center gap-1.5 text-gray-500 text-[13px] font-medium border-gray-200">

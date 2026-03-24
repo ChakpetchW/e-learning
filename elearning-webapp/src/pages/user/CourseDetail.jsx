@@ -93,7 +93,7 @@ const CourseDetail = () => {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[80px] opacity-50 transform scale-125"
             style={{ backgroundImage: `url(${course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE})` }}
          />
-         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40" />
+         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/30" />
          
          <div className="max-w-6xl mx-auto flex flex-col md:flex-row relative z-10">
             

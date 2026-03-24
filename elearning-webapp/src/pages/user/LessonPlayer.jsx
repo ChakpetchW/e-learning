@@ -98,7 +98,7 @@ const LessonPlayer = () => {
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden animate-fade-in relative mb-10 mt-2">
 
-      <div className={`relative w-full ${lesson.type === 'quiz' ? 'pt-8 pb-16 bg-slate-900' : 'aspect-video bg-black'} flex items-center justify-center overflow-hidden`}>
+      <div className={`relative w-full ${lesson.type === 'quiz' ? 'bg-slate-900' : 'aspect-video bg-black'} flex items-center justify-center overflow-hidden`}>
         {/* Back Button Overlay */}
         <div className="absolute top-4 left-4 z-40">
           <button
@@ -117,13 +117,19 @@ const LessonPlayer = () => {
             onEnded={handleComplete}
           />
         ) : lesson.type === 'quiz' ? (
-          <div className="flex flex-col items-center gap-4 text-gray-200 p-8 text-center pt-8 z-10 w-full bg-slate-900">
-            <div className="w-20 h-20 bg-gradient-to-tr from-primary to-blue-500 rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-primary/30 transform rotate-3">
-               <FileText size={40} />
+          <div className="flex flex-col items-center gap-6 text-gray-200 px-6 py-16 md:py-20 text-center z-10 w-full relative">
+            {/* Premium Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-black z-0"></div>
+            {/* Decorative background blobs */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] transform translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] transform -translate-x-1/2 translate-y-1/2 z-0 pointer-events-none"></div>
+            
+            <div className="relative z-10 w-24 h-24 bg-gradient-to-tr from-primary via-indigo-500 to-blue-500 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-primary/30 transform -rotate-3 hover:rotate-0 transition-transform duration-500 mt-6">
+               <FileText size={44} strokeWidth={1.5} />
             </div>
-            <div>
-               <h2 className="text-2xl font-black text-white mb-2 tracking-tight">แบบทดสอบ</h2>
-               <p className="text-[13px] text-gray-400 font-medium">มาทดสอบความรู้ที่คุณได้เรียนมากันเถอะ</p>
+            <div className="relative z-10 max-w-md pb-8">
+               <h2 className="text-3xl md:text-4xl font-black text-white mb-3 tracking-tight drop-shadow-sm">แบบทดสอบประจำบท</h2>
+               <p className="text-[14px] text-indigo-100/70 font-medium leading-relaxed">ประเมินความรู้และความเข้าใจของคุณ เพื่อปลดล็อกบทเรียนถัดไปและรับคะแนนสะสม</p>
             </div>
           </div>
         ) : (
