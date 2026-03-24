@@ -220,16 +220,16 @@ const LessonPlayer = () => {
                        </div>
                        <div>
                          <h3 className={`text-3xl font-black tracking-tighter mb-1 ${quizResult.passed ? 'text-emerald-600' : 'text-red-700'}`}>
-                           {quizResult.passed ? 'Excellent Work!' : 'Almost There'}
+                           {quizResult.passed ? 'ยอดเยี่ยมมาก!' : 'เกือบผ่านแล้ว!'}
                          </h3>
-                         <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Your performance results</p>
+                         <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">คะแนนของคุณ</p>
                        </div>
                        <div className="bg-slate-50 px-8 py-3 rounded-2xl border border-slate-100">
                           <p className="text-5xl font-black text-slate-900 tracking-tighter">{quizResult.scorePercent}%</p>
                        </div>
                        
-                       <button onClick={() => { setQuizResult(null); setAnswers({}); }} className="mt-4 px-10 py-3.5 rounded-2xl font-black transition-all border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 text-slate-600 text-sm tracking-widest uppercase">
-                         {quizResult.passed ? 'Review Questions' : 'Retake Quiz'}
+                       <button onClick={() => { setQuizResult(null); setAnswers({}); }} className="mt-4 px-10 py-3.5 rounded-2xl font-black transition-all border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 text-slate-600 text-[11px] tracking-widest uppercase">
+                         {quizResult.passed ? 'ตรวจคำตอบ' : 'ทำควิซอีกครั้ง'}
                        </button>
                     </div>
                   )}
