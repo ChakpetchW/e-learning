@@ -79,7 +79,7 @@ const CourseList = () => {
         <input 
           type="text" 
           placeholder="ค้นหาชื่อคอร์ส หรือคำอธิบาย..." 
-          className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm transition-all text-[15px] font-medium placeholder-gray-400"
+          className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all text-[15px] font-medium placeholder-gray-400"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -116,48 +116,64 @@ const CourseList = () => {
         </div>
       )}
 
-      {/* Course List Grid */}
-      <div className="flex flex-col items-start md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mt-2 mb-6">
+      {/* Course List Grid (SkillLane Style) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4 mb-10">
         {!loading && filtered.length > 0 ? (
           filtered.map(course => (
             <div 
               key={course.id} 
               onClick={() => navigate(`/user/courses/${course.id}`)}
-              className="card flex md:flex-col overflow-hidden cursor-pointer group bg-white h-full shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] ring-1 ring-slate-100/80 border-none w-full"
+              className="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer w-full"
             >
-              <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-full md:h-[190px] xl:h-[220px] shrink-0 md:p-3 md:pb-0">
-                <div className="w-full h-full md:rounded-[1.25rem] overflow-hidden relative shadow-sm md:shadow-[0_2px_10px_rgba(0,0,0,0.05)] bg-slate-100 flex items-center justify-center">
-                  <img src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
-                  <div className="hidden md:flex absolute top-3 left-3 points-pill shadow-md glass !text-amber-700 border border-white/60">
-                    <span className="opacity-80 text-[10px] mr-1">⭐</span>{course.points} Pts
-                  </div>
-                  <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/30 transition-colors duration-500 flex items-center justify-center">
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
-                      <PlayCircle size={28} className="text-white ml-1" strokeWidth={2.5} />
-                    </div>
-                  </div>
+              {/* Image Section */}
+              <div className="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden border-b border-gray-100">
+                <img 
+                   src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} 
+                   alt={course.title} 
+                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                />
+                {/* Play overlay for hover */}
+                <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                   <div className="w-14 h-14 bg-white/95 rounded-full shadow-lg flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                     <PlayCircle size={28} className="text-primary ml-1" />
+                   </div>
                 </div>
               </div>
-              <div className="p-4 md:p-5 flex-1 flex flex-col justify-between w-full">
-                <div>
-                  <div className="flex justify-between items-start mb-1.5 w-full">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider w-[60%] truncate pr-2">{course.category?.name || 'Uncategorized'}</p>
-                    {course.isEnrolled && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0 ${course.enrollmentStatus === 'COMPLETED' ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200/50' : 'bg-primary/10 text-primary ring-1 ring-primary/20'}`}>
-                        {course.enrollmentStatus === 'COMPLETED' ? 'จบแล้ว' : 'กำลังเรียน'}
+              
+              {/* Content Section */}
+              <div className="p-5 flex flex-col flex-1">
+                <div className="flex justify-between items-start mb-2">
+                   <span className="text-[11px] font-bold text-gray-500 tracking-wider uppercase">{course.category?.name || 'Uncategorized'}</span>
+                   {course.isEnrolled && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${course.enrollmentStatus === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
+                        {course.enrollmentStatus === 'COMPLETED' ? 'เรียนจบแล้ว' : 'กำลังเรียน'}
                       </span>
                     )}
-                  </div>
-                  <h4 className="font-extrabold text-[1.05rem] text-slate-900 leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">{course.title}</h4>
                 </div>
+                <h3 className="text-[1.05rem] font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                 
-                <div className="flex flex-wrap sm:flex-nowrap justify-between items-end gap-y-2 mt-4 pt-4 border-t border-slate-50 w-full">
-                  <span className="flex items-center gap-1.5 text-xs font-semibold bg-slate-50/80 px-2.5 py-1.5 rounded-lg text-slate-600 ring-1 ring-slate-200/60">
-                    <Clock size={14} className="text-slate-400" /> {course.lessons?.reduce((acc, l) => acc + (parseInt(l.duration)||0), 0) || '2'}h
-                  </span>
-                  <span className="text-xs font-black text-amber-700 flex items-center gap-1 bg-amber-50 px-2.5 py-1.5 rounded-lg ring-1 ring-amber-200/60">
-                    <Star size={14} className="fill-warning border-none text-warning" /> {course.points}
-                  </span>
+                {/* Meta details */}
+                <div className="flex items-center gap-3 mt-auto mb-4">
+                   <div className="flex items-center gap-1">
+                      <Star size={14} className="fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-bold text-slate-800">4.8</span>
+                      <span className="text-xs text-gray-400 font-medium">(124)</span>
+                   </div>
+                   <div className="flex items-center gap-1.5 text-gray-500 text-[13px] font-medium border-l border-gray-200 pl-3">
+                      <Clock size={14} className="text-gray-400" />
+                      <span>{course.lessons?.reduce((acc, l) => acc + (parseInt(l.duration)||0), 0) || '2'} ชม.</span>
+                   </div>
+                </div>
+
+                {/* Footer Price / Points */}
+                <div className="pt-3.5 border-t border-gray-100 flex justify-between items-center mt-auto">
+                   <div className="flex items-center gap-1.5 overflow-hidden">
+                      <div className="w-5 h-5 rounded-full bg-slate-200 flex-shrink-0"></div>
+                      <span className="text-[11px] font-medium text-gray-500 truncate">ผู้สอน: ทีมงานวิทยากร</span>
+                   </div>
+                   <span className="text-[1.1rem] font-black text-primary">
+                      {course.points > 0 ? `${course.points} พ้อยท์` : 'ฟรีเรียน'}
+                   </span>
                 </div>
               </div>
             </div>
