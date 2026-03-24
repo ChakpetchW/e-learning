@@ -90,10 +90,10 @@ const CourseDetail = () => {
       <div className="relative bg-slate-900 text-white pt-10 pb-16 md:pt-16 md:pb-32 px-5 md:px-8 xl:px-0 overflow-hidden">
          {/* Dynamic Background Image with Blur and Overlay */}
          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[80px] opacity-50 transform scale-125"
-            style={{ backgroundImage: `url(${course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE})` }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-[60px] opacity-60 transform scale-110"
+            style={{ backgroundImage: `url("${course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE}")` }}
          />
-         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/30" />
+         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/60 to-slate-900/20" />
          
          <div className="max-w-6xl mx-auto flex flex-col md:flex-row relative z-10">
             
