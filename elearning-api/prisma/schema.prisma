@@ -151,6 +151,7 @@ model Reward {
   name       String
   pointsCost Int
   stock      Int      @default(0)
+  maxPerUser Int      @default(1)
   status     String   @default("ACTIVE") // "ACTIVE" | "INACTIVE"
   image      String?
   createdAt  DateTime @default(now())

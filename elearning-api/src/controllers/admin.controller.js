@@ -133,9 +133,16 @@ const getAdminRewards = async (req, res) => {
 
 const createReward = async (req, res) => {
   try {
-    const { name, pointsCost, stock, status, image } = req.body;
+    const { name, pointsCost, stock, maxPerUser, status, image } = req.body;
     const reward = await prisma.reward.create({
-      data: { name, pointsCost, stock, status, image }
+      data: { 
+        name, 
+        pointsCost: parseInt(pointsCost), 
+        stock: parseInt(stock), 
+        maxPerUser: maxPerUser !== undefined ? parseInt(maxPerUser) : 1,
+        status, 
+        image 
+      }
     });
     res.status(201).json(reward);
   } catch (error) {
@@ -147,6 +154,9 @@ const updateReward = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
+    if (data.maxPerUser !== undefined) data.maxPerUser = parseInt(data.maxPerUser);
+    if (data.pointsCost !== undefined) data.pointsCost = parseInt(data.pointsCost);
+    if (data.stock !== undefined) data.stock = parseInt(data.stock);
     const reward = await prisma.reward.update({ where: { id }, data });
     res.json(reward);
   } catch (error) {

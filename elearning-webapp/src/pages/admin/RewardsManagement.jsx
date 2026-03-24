@@ -16,7 +16,7 @@ const RewardsManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [newReward, setNewReward] = useState({ name: '', pointsCost: 100, stock: 10, image: '' });
+  const [newReward, setNewReward] = useState({ name: '', pointsCost: 100, stock: 10, maxPerUser: 1, image: '' });
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
@@ -71,13 +71,13 @@ const RewardsManagement = () => {
     setShowModal(false);
     setIsEditing(false);
     setEditingId(null);
-    setNewReward({ name: '', pointsCost: 100, stock: 10, image: '' });
+    setNewReward({ name: '', pointsCost: 100, stock: 10, maxPerUser: 1, image: '' });
   };
 
   const openEdit = (reward) => {
     setIsEditing(true);
     setEditingId(reward.id);
-    setNewReward({ name: reward.name, pointsCost: reward.pointsCost, stock: reward.stock, image: reward.image || '' });
+    setNewReward({ name: reward.name, pointsCost: reward.pointsCost, stock: reward.stock, maxPerUser: reward.maxPerUser || 1, image: reward.image || '' });
     setShowModal(true);
   };
 
@@ -169,6 +169,16 @@ const RewardsManagement = () => {
                       className="form-input w-full" 
                       value={newReward.stock}
                       onChange={(e) => setNewReward({...newReward, stock: parseInt(e.target.value)})}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-bold text-gray-700 block mb-1">จำกัดสิทธิต่อคน (ครั้ง)</label>
+                    <input 
+                      type="number" 
+                      className="form-input w-full" 
+                      value={newReward.maxPerUser}
+                      min="1"
+                      onChange={(e) => setNewReward({...newReward, maxPerUser: parseInt(e.target.value)})}
                     />
                   </div>
                   <div className="flex gap-2 mt-2">

@@ -375,11 +375,28 @@ const getPointsHistory = async (req, res) => {
 // Get rewards catalog
 const getRewards = async (req, res) => {
   try {
+    const userId = req.user.userId;
     const rewards = await prisma.reward.findMany({
       where: { status: 'ACTIVE' },
       orderBy: { pointsCost: 'asc' }
     });
-    res.json(rewards);
+    
+    // Check how many times user has redeemed each
+    const userRequests = await prisma.redeemRequest.groupBy({
+       by: ['rewardId'],
+       where: { userId, status: { not: 'REJECTED' } },
+       _count: { id: true }
+    });
+    
+    const countMap = {};
+    userRequests.forEach(r => countMap[r.rewardId] = r._count.id);
+
+    const data = rewards.map(r => ({
+      ...r,
+      userRedeemedCount: countMap[r.id] || 0
+    }));
+
+    res.json(data);
   } catch (error) {
     console.error('Get rewards error:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -395,6 +412,14 @@ const requestRedeem = async (req, res) => {
     const reward = await prisma.reward.findUnique({ where: { id: rewardId } });
     if (!reward || reward.status !== 'ACTIVE' || reward.stock <= 0) {
       return res.status(400).json({ message: 'Reward unavailable or out of stock' });
+    }
+
+    // Check limits
+    const userRedeemed = await prisma.redeemRequest.count({
+      where: { userId, rewardId, status: { not: 'REJECTED' } }
+    });
+    if (userRedeemed >= reward.maxPerUser) {
+      return res.status(400).json({ message: 'คุณแลกรางวัลนี้ครบตามสิทธิที่กำหนดแล้ว' });
     }
 
     // Check balance

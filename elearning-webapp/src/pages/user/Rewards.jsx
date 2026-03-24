@@ -53,8 +53,9 @@ const Rewards = () => {
     }
   };
 
-  const handleRedeem = async (rewardId, cost) => {
+  const handleRedeem = async (rewardId, cost, max, userRedeemed) => {
     if (points < cost) return alert('แต้มไม่พอ');
+    if (userRedeemed >= max) return alert('สิทธิของคุณเต็มแล้ว');
     if (confirm('ยืนยันการแลกของรางวัล?')) {
       try {
         setRedeeming(true);
@@ -120,8 +121,13 @@ const Rewards = () => {
         </div>
         
         <div className="grid grid-cols-2 gap-4">
-          {rewards.map(reward => (
-            <div key={reward.id} className={`card border-gray-100 flex flex-col h-full bg-white relative overflow-hidden group ${reward.stock === 0 ? 'opacity-70 grayscale-[0.8]' : ''}`}>
+          {rewards.map(reward => {
+            const isLimitReached = reward.userRedeemedCount >= reward.maxPerUser;
+            const isOutOfStock = reward.stock === 0;
+            const isDisabled = isLimitReached || isOutOfStock || points < reward.pointsCost || redeeming;
+            
+            return (
+            <div key={reward.id} className={`card border-gray-100 flex flex-col h-full bg-white relative overflow-hidden group ${(isOutOfStock || isLimitReached) ? 'opacity-70 grayscale-[0.8]' : ''}`}>
               
               <div className={`${reward.image?.includes('/') ? 'bg-gray-100' : bgMap[reward.image] || bgMap.default} h-28 flex items-center justify-center relative overflow-hidden transition-colors duration-300 group-hover:bg-opacity-80`}>
                 <div className="absolute top-0 right-0 w-16 h-16 bg-white/30 rounded-full blur-xl transform translate-x-1/2 -translate-y-1/2"></div>
@@ -149,18 +155,19 @@ const Rewards = () => {
                   </div>
                   
                   <button 
-                    onClick={() => handleRedeem(reward.id, reward.pointsCost)}
-                    disabled={reward.stock === 0 || points < reward.pointsCost || redeeming}
+                    onClick={() => handleRedeem(reward.id, reward.pointsCost, reward.maxPerUser, reward.userRedeemedCount)}
+                    disabled={isDisabled}
                     className="w-full py-2 rounded-lg text-sm font-bold transition-all
                                disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none
                                bg-primary text-white hover:bg-primary-hover shadow-sm hover:shadow-md"
                   >
-                    {reward.stock === 0 ? 'ครบจำนวนแลกแล้ว' : 'แลกรางวัล'}
+                    {isLimitReached ? 'เต็มสิทธิแล้ว' : isOutOfStock ? 'ครบจำนวนแลกแล้ว' : 'แลกรางวัล'}
                   </button>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

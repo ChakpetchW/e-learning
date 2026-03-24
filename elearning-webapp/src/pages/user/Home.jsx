@@ -62,35 +62,43 @@ const Home = () => {
   const CourseCard = ({ course }) => (
     <div 
       onClick={() => navigate(`/user/courses/${course.id}`)}
-      className="card w-[300px] md:w-full snap-center md:snap-none flex-shrink-0 md:flex-shrink cursor-pointer group flex flex-col items-stretch overflow-hidden h-auto shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] ring-1 ring-slate-100/80 border-none bg-white"
+      className="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer w-[280px] md:w-full snap-center md:snap-none shrink-0"
     >
-      <div className="relative w-full h-[190px] xl:h-[220px] shrink-0 p-3 pb-0">
-        <div className="w-full h-full rounded-[1.25rem] overflow-hidden relative shadow-[0_2px_10px_rgba(0,0,0,0.05)] bg-slate-100">
-          <img 
-            src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} 
-            alt={course.title} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
-          />
-          <div className="absolute top-3 left-3 points-pill shadow-md glass !text-amber-700 border border-white/60">
-            <span className="opacity-80 text-[10px] mr-1">⭐</span>{course.points} Pts
-          </div>
-          <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/30 transition-colors duration-500 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full glass-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
-              <PlayCircle size={28} className="text-white ml-1" strokeWidth={2.5} />
-            </div>
-          </div>
+      <div className="relative w-full aspect-[16/9] bg-gray-100 overflow-hidden border-b border-gray-100">
+        <img 
+           src={course.image ? getFullUrl(course.image) : DEFAULT_COURSE_IMAGE} 
+           alt={course.title} 
+           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+        />
+        <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+           <div className="w-14 h-14 bg-white/95 rounded-full shadow-lg flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+             <PlayCircle size={28} className="text-primary ml-1" />
+           </div>
         </div>
       </div>
       
-      <div className="p-5 flex-1 flex flex-col justify-start">
-        <h4 className="font-extrabold text-[#0F172A] text-[1.05rem] leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
-          {course.title}
-        </h4>
-        <div className="flex items-center gap-3 text-xs font-semibold mt-auto pt-4 border-t border-slate-50">
-          <span className="flex items-center gap-1.5 bg-slate-50/80 px-2.5 py-1.5 rounded-lg text-slate-600 ring-1 ring-slate-200/60">
-            <Clock size={14} className="text-slate-400"/> 2h
-          </span>
-          <span className="text-slate-400 truncate">{course.category?.name || 'Uncategorized'}</span>
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex justify-between items-start mb-2">
+           <span className="text-[11px] font-bold text-gray-500 tracking-wider uppercase">{course.category?.name || 'Uncategorized'}</span>
+           {course.isEnrolled && (
+              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${course.enrollmentStatus === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
+                {course.enrollmentStatus === 'COMPLETED' ? 'เรียนจบแล้ว' : 'กำลังเรียน'}
+              </span>
+            )}
+        </div>
+        <h3 className="text-[1.05rem] font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
+        
+        <div className="flex items-center gap-3 mt-auto mb-4">
+           <div className="flex items-center gap-1.5 text-gray-500 text-[13px] font-medium border-gray-200">
+              <Clock size={14} className="text-gray-400" />
+              <span>{course.lessons?.reduce((acc, l) => acc + (parseInt(l.duration)||0), 0) || '2'} ชม.</span>
+           </div>
+        </div>
+
+        <div className="pt-3.5 border-t border-gray-100 flex justify-between items-center mt-auto">
+           <span className="text-[1.1rem] font-black text-primary">
+              {course.points > 0 ? `${course.points} Pts` : 'ฟรีเรียน'}
+           </span>
         </div>
       </div>
     </div>

@@ -96,19 +96,20 @@ const LessonPlayer = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0A0A0A] -m-4 sm:m-0 sm:rounded-2xl overflow-hidden animate-fade-in relative w-full lg:max-w-5xl xl:max-w-6xl mx-auto shadow-2xl">
+    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden animate-fade-in relative mb-10 mt-2">
 
-      <div className="absolute top-0 w-full p-4 flex justify-between items-start z-40 bg-gradient-to-b from-black/60 to-transparent pb-8 pointer-events-none">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors pointer-events-auto"
-        >
-          <ArrowLeft size={20} />
-        </button>
-      </div>
+      <div className={`relative w-full ${lesson.type === 'quiz' ? 'pt-8 pb-16 bg-slate-900' : 'aspect-video bg-black'} flex items-center justify-center overflow-hidden`}>
+        {/* Back Button Overlay */}
+        <div className="absolute top-4 left-4 z-40">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
 
-      <div className={`relative w-full ${lesson.type === 'quiz' ? 'pt-8 pb-12' : 'aspect-video'} bg-[#0e0e0e] flex items-center justify-center overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent opacity-30"></div>
+        {/* Media Content */}
         {lesson.type === 'video' ? (
           <VideoPlayer
             key={lesson.contentUrl}
@@ -116,7 +117,7 @@ const LessonPlayer = () => {
             onEnded={handleComplete}
           />
         ) : lesson.type === 'quiz' ? (
-          <div className="flex flex-col items-center gap-4 text-gray-200 p-8 text-center pt-8 z-10">
+          <div className="flex flex-col items-center gap-4 text-gray-200 p-8 text-center pt-8 z-10 w-full bg-slate-900">
             <div className="w-20 h-20 bg-gradient-to-tr from-primary to-blue-500 rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-primary/30 transform rotate-3">
                <FileText size={40} />
             </div>
@@ -126,16 +127,15 @@ const LessonPlayer = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-6 text-gray-400 p-8 text-center z-10">
-            <div className="w-20 h-20 bg-gray-800/80 rounded-2xl flex items-center justify-center text-primary border border-gray-700 shadow-xl backdrop-blur-sm">
-              <FileText size={40} />
+          <div className="flex flex-col items-center gap-5 p-8 text-center z-10 w-full bg-slate-900">
+            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-primary backdrop-blur-sm shadow-xl">
+              <FileText size={32} />
             </div>
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-white mb-2">บทเรียนรูปแบบเอกสาร</p>
-              <p className="text-xs text-gray-500 mb-6">คลิกปุ่มด้านล่างเพื่อเปิดอ่านเนื้อหา</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-2">บทเรียนรูปแบบเอกสาร</p>
               <button
                 onClick={() => window.open(getFullUrl(lesson.contentUrl), '_blank')}
-                className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 mx-auto shadow-lg shadow-primary/20"
+                className="mt-4 bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 mx-auto shadow-lg shadow-primary/30"
               >
                 <BookOpen size={18} /> เปิดอ่านเอกสาร
               </button>
@@ -144,24 +144,24 @@ const LessonPlayer = () => {
         )}
       </div>
 
-      <div className={`flex-1 bg-white p-6 ${lesson.type === 'quiz' ? 'rounded-t-[32px]' : 'rounded-t-3xl'} -mt-4 relative z-20 sm:rounded-none sm:mt-0 flex flex-col min-h-[50vh]`}>
-        <div className="w-12 h-1.5 bg-gray-200/80 rounded-full mx-auto mb-6"></div>
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] -mt-6 relative z-20 flex flex-col min-h-[300px] border-t border-slate-100 shadow-[0_-8px_20px_rgba(0,0,0,0.03)]">
+        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
 
-        <div className="flex justify-between items-start mb-3">
-          <h1 className="text-xl font-black text-gray-900 leading-tight pr-4">{lesson.title}</h1>
+        <div className="flex justify-between items-start mb-4">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 leading-tight pr-4">{lesson.title}</h1>
           {completed && (
-            <span className="bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg block shrink-0 border border-success/20">
+            <span className="bg-emerald-50 text-emerald-600 text-[10px] md:text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg block shrink-0 border border-emerald-200 shadow-sm">
               Completed
             </span>
           )}
         </div>
 
-        <div className="flex gap-2 mb-6">
-          <span className="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-            {lesson.type === 'video' ? <Play size={12} /> : <FileText size={12} />} {lesson.type || 'Video'}
+        <div className="flex gap-2 mb-8">
+          <span className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+            {lesson.type === 'video' ? <Play size={14} className="text-primary"/> : <FileText size={14} className="text-primary"/>} {lesson.type || 'Video'}
           </span>
-          <span className="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-            <Clock size={12} /> {lesson.duration || '10'}m
+          <span className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <Clock size={14} className="text-slate-400"/> {lesson.duration || '10'}m
           </span>
         </div>
 
@@ -322,9 +322,9 @@ const LessonPlayer = () => {
             <button
               onClick={handleComplete}
               disabled={updating}
-              className="btn bg-gray-900 text-white hover:bg-black w-full py-4 text-[15px] rounded-xl shadow-lg border border-gray-800 transition-all flex items-center justify-center gap-2 font-bold disabled:opacity-75"
+              className="btn bg-primary text-white hover:bg-primary-hover w-full py-4 text-[15px] rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 font-bold disabled:opacity-75"
             >
-              <CheckCircle size={20} /> {updating ? 'กำลังบันทึก...' : 'ทำเครื่องหมายว่าเรียนจบ'}
+              <CheckCircle size={20} /> {updating ? 'กำลังบันทึก...' : 'เรียนจบแล้ว (ทำเครื่องหมายว่าจบ)'}
             </button>
           ) : completed && lesson.type !== 'quiz' ? (
             <div className="bg-success/10 border border-success/20 text-success p-5 rounded-2xl text-center animate-fade-in flex flex-col items-center gap-3 shadow-inner">
