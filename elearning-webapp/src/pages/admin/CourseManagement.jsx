@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Search, Edit, Trash2, MoreVertical, FileText, Video, Layers, X, ChevronRight, Play, Upload, Clock, MonitorPlay, Infinity as InfinityIcon, Award, PlayCircle, BookOpen, Image as ImageIcon } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, MoreVertical, FileText, Video, Layers, X, ChevronRight, Play, Upload, Clock, MonitorPlay, Infinity as InfIcon, Award, PlayCircle, BookOpen, Image as ImageIcon } from 'lucide-react';
 import { adminAPI, getFullUrl, DEFAULT_COURSE_IMAGE } from '../../utils/api';
 
 // --- ROBUST SUB-COMPONENTS FOR PREMIUM LISTS ---
@@ -56,7 +56,7 @@ const BenefitListEditor = ({ value, onChange }) => {
   const items = tryParse(value);
   const update = (newItems) => onChange(JSON.stringify(newItems));
 
-  const IconCompMap = { MonitorPlay, FileText, InfinityIcon, Award, PlayCircle, BookOpen };
+  const IconCompMap = { MonitorPlay, FileText, InfIcon, Award, PlayCircle, BookOpen };
 
   return (
     <div className="space-y-4">
@@ -79,7 +79,7 @@ const BenefitListEditor = ({ value, onChange }) => {
               >
                 <option value="MonitorPlay">วิดีโอ (Video)</option>
                 <option value="FileText">เอกสาร (File)</option>
-                <option value="InfinityIcon">ตลอดชีพ (Lifetime)</option>
+                <option value="InfIcon">ตลอดชีพ (Lifetime)</option>
                 <option value="Award">วุฒิบัตร (Award)</option>
                 <option value="PlayCircle">การเล่น (Play)</option>
                 <option value="BookOpen">บทเรียน (Lesson)</option>
