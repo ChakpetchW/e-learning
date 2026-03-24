@@ -291,7 +291,7 @@ const CourseDetail = () => {
                            onClick={() => navigate(`/user/courses/${course.id}/lesson/${course.lessons[0]?.id}`)}
                            className="w-full py-4 bg-primary text-white rounded-xl font-bold tracking-wide shadow-lg shadow-primary/30 hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 text-[15px]"
                         >
-                           {course.progressPercent === 0 ? 'เริ่มเรียนเลย' : 'เรียนต่อให้จบ'} <ArrowLeft size={18} className="rotate-180" />
+                           {course.progressPercent === 100 ? 'ทบทวนบทเรียน' : (course.progressPercent === 0 ? 'เริ่มเรียนเลย' : 'เรียนต่อให้จบ')} <ArrowLeft size={18} className="rotate-180" />
                         </button>
                      </div>
                   ) : (
