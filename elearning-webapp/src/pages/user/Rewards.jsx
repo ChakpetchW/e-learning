@@ -39,15 +39,21 @@ const Rewards = () => {
 
   const fetchData = async () => {
     try {
-      const [pointsRes, rewardsRes] = await Promise.all([
+      const [pointsRes, rewardsRes] = await Promise.allSettled([
         userAPI.getPoints(),
         userAPI.getRewards()
       ]);
-      setPoints(pointsRes.data.balance);
-      setHistory(pointsRes.data.history);
-      setRewards(rewardsRes.data);
+      
+      if (pointsRes.status === 'fulfilled') {
+        setPoints(pointsRes.value.data.balance);
+        setHistory(pointsRes.value.data.history);
+      }
+      
+      if (rewardsRes.status === 'fulfilled') {
+        setRewards(rewardsRes.value.data);
+      }
     } catch (error) {
-      console.error('Fetch rewards error:', error);
+      console.error('Fetch error:', error);
     } finally {
       setLoading(false);
     }
