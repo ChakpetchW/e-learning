@@ -93,7 +93,7 @@ const CompletedCourses = () => {
                 {/* Play overlay for hover */}
                 <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
                    <div className="w-14 h-14 bg-white/95 rounded-full shadow-lg flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                     <PlayCircle size={28} className="text-primary translate-x-0.5" />
+                     <PlayCircle size={28} className="text-primary" />
                    </div>
                 </div>
                 <div className="absolute top-2 right-2 z-20">
@@ -123,7 +123,7 @@ const CompletedCourses = () => {
                 </div>
 
                 {/* Footer Points Info */}
-                <div className="pt-3.5 border-t border-gray-100 flex justify-between items-center mt-auto">
+                <div className="pt-3.5 border-t border-gray-100 flex justify-between items-center mt-auto gap-4">
                    <div className="flex flex-col">
                       <span className="text-[9px] text-gray-400 font-bold uppercase mb-0.5">คะแนนที่ได้รับ</span>
                       <span className="text-sm font-black text-amber-600">
