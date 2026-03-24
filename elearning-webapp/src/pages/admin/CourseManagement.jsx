@@ -292,6 +292,12 @@ const CourseManagement = () => {
             {isEditing && (
               <div className="flex border-b border-border px-4 bg-white">
                 <button
+                  onClick={() => setActiveTab('premium')}
+                  className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'premium' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
+                >
+                  ตั้งค่าการแสดงผล (Premium) ✨
+                </button>
+                <button
                   onClick={() => setActiveTab('basic')}
                   className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'basic' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
                 >
@@ -302,12 +308,6 @@ const CourseManagement = () => {
                   className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
                 >
                   เนื้อหาหลักสูตร ({lessons.length})
-                </button>
-                <button
-                  onClick={() => setActiveTab('premium')}
-                  className={`py-3 px-6 text-sm font-bold transition-colors border-b-2 ${activeTab === 'premium' ? 'border-primary text-primary' : 'border-transparent text-muted hover:text-gray-700'}`}
-                >
-                  ตั้งค่าการแสดงผล (Premium)
                 </button>
                 <button
                   onClick={() => { setActiveTab('reports'); fetchQuizReports(editingId); }}
